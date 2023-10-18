@@ -1056,7 +1056,7 @@ private function hLinkFiles( ) as integer
 				case FB_COMPTARGET_OPENBSD, FB_COMPTARGET_NETBSD
 					ldcline += hFindLib( "crt0.o" )
 				case else
-					ldcline += hFindLib( "crti.o" )
+					ldcline += hFindLib( "start_dyn.o" )
 				end select
 			end if
 		end if
