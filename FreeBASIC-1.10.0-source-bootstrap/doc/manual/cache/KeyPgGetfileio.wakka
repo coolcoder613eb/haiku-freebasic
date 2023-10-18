@@ -1,0 +1,195 @@
+{{fbdoc item="title" value="GET (File I/O)"}}----
+Reads data from a file to a buffer
+
+{{fbdoc item="syntax"}}##
+	**Get** #//filenum// [[KeyPgAs|As]] [[KeyPgLong|Long]], [//position// [[KeyPgAs|As]] [[KeyPgLongint|longint]]], [[KeyPgByref|ByRef]] //data// [[KeyPgAs|As]] [[KeyPgAny|Any]] [, [//amount// [[KeyPgAs|As]] [[KeyPgUinteger|Uinteger]]] [, [[KeyPgByref|ByRef]] //bytesread// [[KeyPgAs|As]] [[KeyPgUinteger|Uinteger]]] ]
+	**Get** #//filenum// [[KeyPgAs|As]] [[KeyPgLong|Long]], [//position// [[KeyPgAs|As]] [[KeyPgLongint|longint]]], //data// [[KeyPgAs|As]] [[KeyPgString|String]] [, , [[KeyPgByref|ByRef]] //bytesread// [[KeyPgAs|As]] [[KeyPgUinteger|Uinteger]] ]
+	**Get** #//filenum// [[KeyPgAs|As]] [[KeyPgLong|Long]], [//position// [[KeyPgAs|As]] [[KeyPgLongint|longint]]], //data()// [[KeyPgAs|As]] [[KeyPgAny|Any]] [, , [[KeyPgByref|ByRef]] //bytesread// [[KeyPgAs|As]] [[KeyPgUinteger|Uinteger]] ]
+##
+{{fbdoc item="usage"}}##
+	**Get** #//filenum//, //position//, //data// [, [//amount//] [, //bytesread// ] ]
+	varres = **Get** (#//filenum//, //position//, //data// [, [//amount//] [, //bytesread// ] ] )
+##
+{{fbdoc item="param"}}
+	##//filenum//##
+		The value passed to ##[[KeyPgOpen|Open]]## when the file was opened.
+	##//position//##
+		The position where the read must start. If the file was opened ##[[KeyPgRandom|For Random]]##, the position is in records; otherwise, it is in bytes. If omitted, reading starts at the present file pointer position.  The position is 1-based: i.e. first record or byte of a file is at position ##1##.
+		If ##//position//## is omitted or zero (##0##), file reading will start from the current file position.
+	##//data//##
+		The buffer where data is written. It can be a numeric variable, a string, an array, a user defined type (including referenced by ##[[KeyPgThis|This]]##), or a dereferenced pointer. The read operation will try to fill completely the variable, unless the ##[[KeyPgEof|EOF]]## is reached. For a user-defined type instance, the data impacted is only the non-static data members.
+		When getting arrays, ##//data//## should be followed by an empty pair of brackets: "##()##".  ##**Get**## will read data for all of the values in the array.  ##//amount//## is not allowed.
+		When getting ##[[KeyPgString|String]]##s, the number of bytes read is the same as the number of bytes in the string data. ##//amount//## is not allowed.
+		Note: If you want to read values into a buffer, you should NOT pass a pointer to the buffer; instead you should pass the first variable in the buffer (this can be done by dereferencing the pointer with ##[[KeyPgOpValueOf|Operator * (Value of)]]##). If you pass a pointer directly, then ##**Get**## will overwrite the pointer variable, not the memory it points to.
+	##//amount//##
+		Makes ##**Get**## read ##//amount//## consecutive variables from file to memory, i.e. it reads ##(//amount// * [[KeyPgSizeof|Sizeof]](//data//) )## bytes of data from file into the memory starting at ##//data//##'s memory location.  If ##//amount//## is omitted it defaults to ##1##, meaning that ##**Get**## just reads a single variable.
+	##//bytesread//##
+		An unsigned integer variable to accept the result of the number of bytes read successfully from the file.
+
+{{fbdoc item="ret"}}
+	##**Get()**## returns a 32 bit ##[[KeyPgLong|Long]]##: a zero (##0##) on success; non-zero on error.
+	Note: if ##[[KeyPgEof|EOF]]## (end of file) is reached while reading, ##**Get**## will return success.  The amount of bytes actually read can be checked by passing a ##//bytesread//## variable.
+
+{{fbdoc item="desc"}}
+	Reads binary data from a file to a buffer variable
+	
+	##**Get**## can be used as a function, and will return ##0## on success or an error code on failure.	
+	
+	For files opened in ##[[KeyPgRandom|Random]]## mode, the size in bytes of the data to read must match the specified record size.
+	
+	//Note:
+		""-"" If a real [w/z]string variable is passed to ##**Get**##, the ##amount## parameter should be forbidden as it is when passing a string. Do not use. Otherwise, it is ignored (except for the '0' value).
+		""-"" If a dereferenced [w/z]string pointer is passed to ##**Get**##, the ##amount## parameter is not taken into account as it is when passing a dereferenced numeric pointer. Do not use. But instead of respecting the ##amount## parameter, the pointed buffer must begin with at least as many non-zero elements as the number of elements to read.
+		""-"" For finer granularity, any [w/z]string variable can be safely passed to ##**Get**## as a numeric buffer by providing the first numeric element (an indexed [w/z]string variable, or a dereferenced [w/z]string pointer then indexed) and the number of numeric elements to be processed.//
+
+{{fbdoc item="ex"}}
+	{{fbdoc item="filename" value="examples/manual/fileio/get.bas"}}%%(freebasic)
+Dim Shared f As Integer
+
+Sub get_long()
+
+	Dim buffer As Long ' Long variable
+
+	' Read a Long (4 bytes) from the file into buffer, using file number "f".
+	Get #f, , buffer
+
+	' print out result
+	Print buffer
+	Print
+
+End Sub
+
+Sub get_array()
+
+	Dim an_array(0 To 10-1) As Long ' array of Longs
+
+	' Read 10 Longs (10 * 4 = 40 bytes) from the file into an_array, using file number "f".
+	Get #f, , an_array()
+
+	' print out result
+	For i As Integer = 0 To 10-1
+		Print an_array(i)
+	Next
+	Print
+
+End Sub
+
+Sub get_mem
+
+	Dim pmem As Long Ptr
+
+	' allocate memory for 5 Longs
+	pmem = Allocate(5 * SizeOf(Long))
+
+	' Read 5 Longs (5 * 4 = 20 bytes) from the file into allocated memory
+	Get #f, , *pmem, 5 ' Note pmem must be dereferenced (*pmem, or pmem[0])
+
+	' print out result using [] Pointer Indexing
+	For i As Integer = 0 To 5-1
+		Print pmem[i]
+	Next
+	Print
+
+	' free pointer memory to prevent memory leak
+	Deallocate pmem
+
+End Sub
+
+' Find the first free file file number.
+f = FreeFile
+
+' Open the file "file.ext" for binary usage, using the file number "f".
+Open "file.ext" For Binary As #f
+
+  get_long()
+
+  get_array()
+
+  get_mem()
+
+' Close the file.  
+Close #f
+%%
+
+	{{fbdoc item="filename" value="examples/manual/fileio/get-file.bas"}}%%(freebasic)
+' Load a small text file to a string
+
+Function LoadFile(byref filename As string) As String
+	
+	Dim h As Integer
+	Dim txt As String
+	
+	h = FreeFile
+	
+	if Open( filename For Binary Access Read As #h ) <> 0 then return ""
+	
+	If Lof(h) > 0 Then
+		
+		txt = String(Lof(h), 0)
+		if Get( #h, ,txt ) <> 0 then txt = ""
+		
+	End If
+	
+	Close #h
+	
+	Return txt
+	
+End Function
+
+Dim ExampleStr As String
+ExampleStr = LoadFile("smallfile.txt")
+Print ExampleStr
+%%
+
+	{{fbdoc item="filename" value="examples/manual/fileio/get-udt.bas"}}%%(freebasic)
+' 'THIS' can be used as argument for writing/filling all non-static data of an UDT instance to/from a file
+
+Type UDT
+	Dim As String * 32 s
+	Dim As Double d
+	Declare Sub Save(Byref filename As String)
+	Declare Sub Load(Byref filename As String)
+End Type
+
+Sub UDT.Save(Byref filename As String)
+	Dim As Integer f
+	f = Freefile()
+	Open filename For Binary As #f
+	Put #f, , This  '' writes all non-static data of the UDT instance to the file
+	Close #f
+End Sub
+
+SUB UDT.Load(Byref filename As String)
+	Dim As Integer f
+	f = Freefile()
+	Open filename For Binary As #f
+	Get #f, , This  '' fills all non-static data of the UDT instance from the file
+	Close #f
+End Sub
+
+Dim As UDT u1
+u1.s = "PI number"
+u1.d = 3.14159
+u1.Save("file.ext")
+
+Dim As UDT u2
+u2.Load("file.ext")
+Print u2.s
+Print u2.d
+%%
+{{fbdoc item="diff"}}
+	- ##**Get**## in FB can read full arrays as in VB or, alternatively, read a multiple of the data size into the memory.
+	- ##**Get**## can be used as a function in FB, to find the success/error code returned without having to use error handling procedures.
+	- FB allows the ##//bytesread//## parameter, to check how many bytes have been successfully read in.
+
+{{fbdoc item="see"}}
+	- ##[[KeyPgGetgraphics|Get (Graphics)]]## different usage of same keyword 
+	- ##[[KeyPgPutfileio|Put (File I/O)]]##
+	- ##[[KeyPgOpen|Open]]##
+	- ##[[KeyPgClose|Close]]##
+	- ##[[KeyPgBinary|Binary]]##
+	- ##[[KeyPgRandom|Random]]##
+	- ##[[KeyPgFreefile|Freefile]]##
+	- ##[[ProPgFileIO|File I/O methods comparison]]##
+
+{{fbdoc item="back" value="CatPgFile|File I/O Functions"}}

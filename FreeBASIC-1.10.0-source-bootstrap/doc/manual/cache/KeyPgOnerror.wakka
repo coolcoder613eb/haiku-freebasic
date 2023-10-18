@@ -1,0 +1,85 @@
+{{fbdoc item="title" value="ON ERROR"}}----
+Error handling statement to set the current error handler
+
+{{fbdoc item="syntax"}}##
+	On [[[KeyPgLocal|Local]]] Error Goto //label//
+##
+{{fbdoc item="param"}}
+	##//label//##
+		Label to jump to when an error occurs
+
+{{fbdoc item="desc"}}
+	**On Error** triggers a jump to an error handler when an error occurs. Such errors can be triggered by built-in statements such as ##[[KeyPgOpen|Open]]##, or when the ##[[KeyPgError|Error]]## statement is used.
+	
+	Note: The error checking for built-in statements is only enabled if the program is compiled with one of the //[[CompilerOpte|-e]]//, //[[CompilerOptex|-ex]]// or //[[CompilerOptexx|-exx]]// options. **On Error** remains working with ##[[KeyPgError|Error]]## even when none of these options are used.
+	
+	##[[KeyPgLocal|On Local Error]]## can be used to specify a local error handler inside a procedure. This allows for specialized per-procedure error handling and will override the global error handler, if any.
+	Without ##[[KeyPgLocal|Local]]##, the handler must be in the main part of the module.
+	Remark: Presently, the ##[[KeyPgLocal|Local]]## clause is ignored by the compiler.
+	
+	##**On Error Goto 0**## deactivates the current error handler.
+
+{{fbdoc item="ex"}}
+{{fbdoc item="filename" value="examples/manual/error/onerror.bas"}}%%(freebasic)
+'' Compile with QB (-lang qb) dialect
+
+'$lang: "qb"
+
+On Error Goto errorhandler
+Error 24 '' simulate an error
+Print "this message will not be seen"
+
+errorhandler:
+n = Err
+Print "Error #"; n; "!"
+End
+%%
+
+{{fbdoc item="filename" value="examples/manual/error/onerror2.bas"}}%%(freebasic)
+'' compile as: fbc onerror.bas -ex
+
+#lang "fblite"
+
+function hFileExists( filename as string ) as integer static
+	dim f as integer
+
+	hFileExists = 0
+
+	on local error goto exitfunction
+
+	f = freefile
+	open filename for input as #f
+	
+	close #f
+
+	hFileExists = -1
+
+exitfunction:
+	exit function
+end function
+
+
+	print "File exists (0=false): "; hFileExists( command )
+
+	on error goto errhandler
+	error 1234
+	print "back from resume next"
+	end 0
+
+errhandler:
+	print "error number: " + str( err ) + " at line: " + str( erl )
+	resume next
+%%
+
+{{fbdoc item="diff"}}
+	- QB has no LOCAL clause and requires the label to be in the main part of the module. 
+
+{{fbdoc item="see"}}
+	- ##[[KeyPgError|Error]]##
+	- ##[[KeyPgLocal|Local]]##
+	- ##[[KeyPgErr|Err]]##
+	- ##[[TblRuntimeErrors|Runtime Error Codes]]##
+	- ##[[ProPgErrorHandling|Error Handling]]##
+	- ##[[ProPgLabels|Labels]]##
+
+{{fbdoc item="back" value="CatPgError|Error Handling Functions"}}

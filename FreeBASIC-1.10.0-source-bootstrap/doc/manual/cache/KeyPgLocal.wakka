@@ -1,0 +1,44 @@
+{{fbdoc item="title" value="LOCAL"}}----
+Error handling statement to set the current error handler
+
+{{fbdoc item="syntax"}}##
+	On **Local** Error Goto //label//
+##
+{{fbdoc item="desc"}}
+	The ##**Local**## clause in an ##[[KeyPgOnerror|On Error]]## construction allows to define an error handler in the same ##[[KeyPgSub|Sub]]## or ##[[KeyPgFunction|Function]]## the ##**On Local Error**## is in.
+	
+	 **Remark:** Presently, the ##**Local**## clause (authorized only inside Sub/Function) is ignored by the compiler, and the error handler should be in the scope of the same procedure the On [Local] Error is in.
+
+{{fbdoc item="ex"}}
+{{fbdoc item="filename" value="examples/manual/error/local.bas"}}%%(freebasic)
+'' compile with -lang fblite or qb
+
+#lang "fblite"
+
+Declare Sub foo
+
+foo
+Print "ok"
+Sleep
+
+Sub foo
+  Dim errno As Integer
+  On Local Error Goto fail
+  Open "xzxwz.zwz" For Input As #1
+  On Local Error Goto 0
+  Exit Sub
+fail:                  ' here starts the error handler
+  errno = Err
+  Print "Error "; errno      ' just print the error number
+  Sleep
+End Sub
+%%
+
+{{fbdoc item="diff"}}
+	- The LOCAL clause comes from PDS 7.1. QB 4.5 does not allow local error handling.
+
+{{fbdoc item="see"}}
+	- ##[[KeyPgOnerror|On Error]]##
+	- ##[[ProPgLabels|Labels]]##
+
+{{fbdoc item="back" value="CatPgError|Error Handling Functions"}}

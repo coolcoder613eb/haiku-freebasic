@@ -1,0 +1,77 @@
+{{fbdoc item="title" value="Type (Alias)"}}----
+Declares an alternative name for a type
+
+{{fbdoc item="syntax"}}##
+	**Type** //typename// [[KeyPgAs|as]] //symbol//
+##
+{{fbdoc item="param"}}
+	##//typename//## 
+		new alternative name.
+	##//symbol//## 
+		symbol or data type declaration to associate with ##//typename//##. 
+
+{{fbdoc item="desc"}}
+	##//symbol//## may refer to any declared data type including a built-in data type, ##[[KeyPgSub|Sub]]## or ##[[KeyPgFunction|Function]]## pointer, ##[[KeyPgType|Type]]## declaration, ##[[KeyPgUnion|Union]]## declaration, or ##[[KeyPgEnum|Enum]]## declaration.
+	
+	A Type Alias can be used to allow forward declarations of parameters in procedure declarations, but only used with pointers (whatever their passing mode), or otherwise with parameters (excluding arrays) but passed or returned only by reference. Generally the bodies of such procedures need to be implemented further in the code once the actual types are well defined (for example because of the passing of such a reference; or when such a pointer passed is then dereferenced in any form).
+	A Type Alias can also be used to allow forward declarations of data fields in [[CatPgUserDefTypes|User Defined Types]], but only used with pointers.
+	
+	A type alias must be used to allow declaration of pointer to a function pointer, otherwise ptr applies on return type and not on function.
+	
+	A Type Alias declaration can also be nested inside a UDT structure declaration for a ##[[KeyPgType|Type]] or a ##[[KeyPgUnion|Union]].
+
+{{fbdoc item="ex"}}
+{{fbdoc item="filename" value="examples/manual/udt/type-fwd.bas"}}%%(freebasic)
+TYPE ParentFwd as Parent
+TYPE Child
+	Name as zstring * 32
+	ParentRef AS ParentFwd ptr
+	''...
+END TYPE
+
+TYPE Parent
+	Name as zstring * 32
+	ChildList(0 to 9) AS Child
+	''...
+END TYPE
+
+DIM p AS Parent
+p.Name = "Foo"
+with p.ChildList(0)
+	.Name = "Jr."
+	.ParentRef = @p
+	'' ...
+end with	
+
+with p.ChildList(0)
+	print .Name; " is child of "; .parentRef->Name
+end with
+%%
+{{fbdoc item="filename" value="examples/manual/udt/type-fctptr.bas"}}%%(freebasic)
+Function triple (ByVal i As Integer) As Integer
+	Return 3 * i
+End Function
+
+Type As Function (ByVal As Integer) As Integer function_alias
+
+'Dim As Function (Byval As Integer) As Integer f  ''this syntax works but is less readable than the next code line
+Dim As function_alias f
+f = @triple
+Print f(123)
+
+'Dim As Function (Byval As Integer) As Integer Ptr pf  ''this syntax does not work because Ptr applies on Integer and not on function
+Dim As function_alias Ptr pf                           ''this syntax works
+pf = @f
+Print (*pf)(123)  ''the dereferenced pointer to procedure pointer must be enclosed in parentheses
+%%
+{{fbdoc item="ver"}}
+	- Since fbc 1.10.0: Nesting of a Type Alias declaration inside a structure declaring a UDT (Type or Union) is allowed.
+
+{{fbdoc item="diff"}}
+	- New to ""FreeBASIC""
+
+{{fbdoc item="see"}}
+	- ##[[KeyPgType|Type...End Type]]##
+	- ##[[KeyPgTypeTemp|Type (Temporary)]]##
+
+{{fbdoc item="back" value="CatPgUserDefTypes|User Defined Types"}}

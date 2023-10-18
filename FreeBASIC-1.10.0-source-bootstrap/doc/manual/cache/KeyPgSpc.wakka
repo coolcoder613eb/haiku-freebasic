@@ -1,0 +1,56 @@
+{{fbdoc item="title" value="SPC"}}----
+Output function to skip spaces when writing to screen or file
+
+{{fbdoc item="syntax"}}##
+	**Spc**( //columns// )
+##
+{{fbdoc item="usage"}}##
+	[[KeyPgPrint|Print]] **Spc**( //spaces// ) [(, | ;)] ...
+##
+{{fbdoc item="param"}}
+	##//spaces//##
+		number of spaces to skip
+
+{{fbdoc item="desc"}}
+	##**Spc**## skips over the given number of ##//spaces//## when ##[[KeyPgPrint|Print]]##ing to screen or to a file.  The character cells skipped over are left unchanged.
+
+{{fbdoc item="ex"}}
+{{fbdoc item="filename" value="examples/manual/console/spc.bas"}}%%(freebasic)
+Print "foo"; Spc(5); "bar"
+Print "hello"; Spc(4); "world"
+%%
+
+{{fbdoc item="filename" value="examples/manual/console/spc2.bas"}}%%(freebasic)
+'' Uses Spc to justify text instead of Tab
+
+Dim As String A1, B1, A2, B2
+
+A1 = "Jane"
+B1 = "Doe"
+A2 = "Bob"
+B2 = "Smith"
+
+Print "FIRST NAME"; Spc(35 - 10); "LAST NAME"
+Print "----------"; Spc(35 - 10); "----------"
+Print A1; Spc(35 - Len(A1)); B1
+Print A2; Spc(35 - Len(A2)); B2
+%%
+
+The output would look like:
+##%%
+FIRST NAME                         LAST NAME
+----------                         ----------
+Jane                               Doe
+Bob                                Smith
+%%##
+
+{{fbdoc item="diff"}}
+	- In QBASIC, spaces were printed in the gap, while in ""FreeBASIC"", the characters are just skipped over and left untouched.  The ##[[KeyPgSpace|Space]]## function can still be used to achieve this effect.
+
+{{fbdoc item="see"}}
+	- ##[[KeyPgTab|Tab]]##
+	- ##[[KeyPgSpace|Space]]##
+	- ##[[KeyPgPrint|Print]]##
+	- ##[[KeyPgPrint|?]]##
+
+{{fbdoc item="back" value="CatPgConsole|Console Functions"}}

@@ -1,0 +1,68 @@
+{{fbdoc item="title" value="(POINTER | PTR)"}}----
+A variable declaration type modifier
+
+{{fbdoc item="syntax"}}##
+	... [[KeyPgAs|as]] [[DataType|DataType]] {**Pointer** | **Ptr**}
+##
+{{fbdoc item="desc"}}
+	Declares a pointer variable.
+	The variable type can be a predefined type or a user-defined type.
+	
+	##[[KeyPgOpAt|Operator @ (Address of)]]## operator or ##[[KeyPgOpVarptr|Varptr]]## are used to take the address of a variable. The ##[[KeyPgOpValueOf|Operator * (Value of)]]## operator is used to dereference the pointer, that is, access the actual value stored in the memory location the pointer is pointing at.
+
+{{fbdoc item="ex"}}
+{{fbdoc item="filename" value="examples/manual/datatype/ptr.bas"}}%%(freebasic)
+' Create the pointer.
+Dim p As Integer Ptr
+
+' Create an integer value that we will point to using pointer "p"
+Dim num As Integer = 98845
+
+' Point p towards the memory address that variable "num" occupies.
+p = @num
+
+' Print the value stored in memory pointed to by pointer "p"
+Print "Pointer 'p' ="; *p
+Print 
+
+' Print the actual location in memory that pointer "p" points at.
+Print "Pointer 'p' points to memory location:"
+Print p
+%%
+{{fbdoc item="filename" value="examples/manual/datatype/pointer.bas"}}%%(freebasic)
+dim p as zstring pointer
+dim text as string
+text = "Hello World!"
+p = strptr(text) + 6
+print text
+print *p
+
+'' Output:
+'' Hello World!
+'' World!
+%%
+{{fbdoc item="filename" value="examples/manual/datatype/ptr-2.bas"}}%%(freebasic)
+Type mytype
+	a As Integer = 12345
+End Type
+
+Dim As mytype mt
+
+Dim As mytype Ptr pmt
+pmt = @mt
+
+Print (*pmt).a  '' or Print pmt->a
+
+'' Output:
+'' 12345
+%%
+{{fbdoc item="lang"}}
+	- Not available in the //[[CompilerOptlang|-lang qb]]// dialect unless referenced with the alias ##**""__Pointer""**## or ##**""__Ptr""**##.
+
+{{fbdoc item="diff"}}
+	- New to ""FreeBASIC""
+
+{{fbdoc item="see"}}
+	- ##[[KeyPgAllocate|Allocate]]##
+
+{{fbdoc item="back" value="CatPgStdDataTypes|Standard Data Types"}}

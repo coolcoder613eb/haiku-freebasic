@@ -1,0 +1,32 @@
+{{fbdoc item="title" value="__FB_ARGV__"}}----
+Intrinsic define (macro value) set by the compiler
+
+{{fbdoc item="syntax"}}##
+	""__FB_ARGV__""
+##
+{{fbdoc item="desc"}}
+	Substituted with a pointer to a list of pointers to the zero terminated command line arguments passed in on the command line including the name of the executable.
+	
+	**""__FB_ARGV__""** is the name of a parameter passed to the program's implicit main function, and therefore is only defined in the module level code of the main module for an application.
+
+{{fbdoc item="ex"}}
+	{{fbdoc item="filename" value="examples/manual/defines/fbargv.bas"}}%%(freebasic)
+Sub displayCommandLineArguments( ByVal argc As Integer, ByVal argv As ZString Ptr Ptr )
+	Dim i As Integer
+	For i = 0 To argc - 1
+		Print "arg "; i; " = '"; *argv[i]; "'"
+	Next i
+End Sub
+
+displayCommandLineArguments( __FB_ARGC__, __FB_ARGV__ )
+
+Sleep
+%%
+{{fbdoc item="diff"}}
+	- New to ""FreeBASIC""
+
+{{fbdoc item="see"}}
+	- ##[[KeyPgDdfbargc|__FB_ARGC__]]##
+	- ##[[KeyPgCommand|Command]]##
+
+{{fbdoc item="back" value="CatPgDddefines|Intrinsic Defines"}}

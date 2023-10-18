@@ -1,0 +1,66 @@
+{{fbdoc item="title" value="Operator * (Value of)"}}----
+Dereferences a pointer
+
+{{fbdoc item="syntax"}}##
+	[[KeyPgDeclare|declare]] [[KeyPgOperator|operator]] ***** ( [[KeyPgByref|byref]] //rhs// [[KeyPgAs|as]] //T// [[KeyPgPtr|pointer]] ) [[KeyPgByrefFunction|byref]] [[KeyPgAs|as]] //T//
+##
+
+{{fbdoc item="usage"}}##
+		//result// = * //rhs//
+	or
+		* //rhs// = //value//
+##
+{{fbdoc item="param"}}
+	##//rhs//##
+		The address to dereference.
+	##//T//##
+		Any [[CatPgStdDataTypes|standard]], [[CatPgUserDefTypes|user-defined]] or procedure type.
+
+{{fbdoc item="ret"}}
+	Returns a reference to the value stored at the address ##//rhs//##.
+
+{{fbdoc item="desc"}}
+	**##Operator *## (Value of)** returns a reference to the value stored at an address, and is often called the dereference operator. The operand is not modified in any way.
+	Any type of ##[[KeyPgPtr|Pointer]]## can be dereferenced except for an ##[[KeyPgAny|Any]]## ##[[KeyPgPtr|Pointer]]##.
+	
+	As a reference, the result of this operator can be used on the left-hand side of assignments.
+	
+	This operator must not be used in case of null pointer because reference is undefined (inducing runtime error).
+	Otherwise, the user must ensure that the pointer value induces access to a valid memory. Otherwise, results are undefined.
+	
+	This operator can be overloaded for user-defined types.
+
+{{fbdoc item="ex"}}
+{{fbdoc item="filename" value="examples/manual/operator/valueof.bas"}}%%(freebasic)
+'This program demonstrates the use of * to utilize the value a pointer points to.
+Dim a As Integer
+Dim pa As Integer Ptr
+
+pa=@a 'Here, we use the @ operator to point our integer ptr at 'a'.
+' 'a' is, in this case, a standard integer variable.
+
+a=9     'Here we give 'a' a value of 9.
+
+Print "The value of 'a' is";*pa 'Here, we display the value of 'a' using a pointer. 
+
+*pa = 1 'Here we use our pointer to change the value of 'a'
+Print "The new value of 'a' is";a 'Here we display the new value of 'a'.
+%%
+Output:
+%%
+The value of 'a' is 9
+The new value of 'a' is 1
+%%
+
+{{fbdoc item="lang"}}
+	- In the //[[CompilerOptlang|-lang qb]]// dialect, this operator cannot be overloaded.
+
+{{fbdoc item="diff"}}
+	- New to ""FreeBASIC""
+
+{{fbdoc item="see"}}
+	- ##[[KeyPgOpAt|Operator @ (Address of)]]##
+	- ##{{fbdoc item="keyword" value="KeyPgOpPtrIndex|Operator [] (Pointer index)"}}##
+	- [[ProPgPointers|Pointers]]
+	
+{{fbdoc item="back" value="CatPgOpPoint|Pointer Operators"}}{{fbdoc item="back" value="CatPgOperators|Operators"}}

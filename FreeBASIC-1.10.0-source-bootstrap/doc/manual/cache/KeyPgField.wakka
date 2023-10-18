@@ -1,0 +1,60 @@
+{{fbdoc item="title" value="FIELD"}}----
+Specifies field alignment.
+
+{{fbdoc item="syntax"}}##
+	[[KeyPgType|Type]]|[[KeyPgUnion|Union]] //typename// **Field** = { 1 | 2 | 4 }
+		...
+	End [[KeyPgType|Type]]|[[KeyPgUnion|Union]]
+##
+{{fbdoc item="desc"}}
+	##**Field**## can be used to pack ##[[KeyPgType|Types]]## or ##[[KeyPgUnion|Unions]]## more tightly than [[DevStructLayout|the default layout]]. The most commonly used value is ##**Field = 1**##, which causes the ##Type## or ##Union## to be packed as tightly as possible, without any padding bytes being added between the fields or at the end of the ##Type##. ##**Field**## can only be used to decrease field alignment, but it cannot be used to increase it. In order to add padding bytes, a ##Union## with appropriate members could be used instead.
+
+{{fbdoc item="ex"}}
+{{fbdoc item="filename" value="examples/manual/udt/field.bas"}}%%(freebasic)
+type bitmap_header field = 1
+	bfType          as ushort
+	bfsize          as ulong
+	bfReserved1     as ushort
+	bfReserved2     as ushort
+	bfOffBits       as ulong
+	biSize          as ulong
+	biWidth         as ulong
+	biHeight        as ulong
+	biPlanes        as ushort
+	biBitCount      as ushort
+	biCompression   as ulong
+	biSizeImage     as ulong
+	biXPelsPerMeter as ulong
+	biYPelsPerMeter as ulong
+	biClrUsed       as ulong
+	biClrImportant  as ulong
+end type
+
+dim bmp_header as bitmap_header
+
+'Open up bmp.bmp and get its header data:
+'Note: Will not work without a bmp.bmp to load . . .
+open "bmp.bmp" for binary as #1
+
+	get #1, , bmp_header
+	
+close #1
+
+print bmp_header.biWidth, bmp_header.biHeight
+
+sleep
+
+%%
+
+{{fbdoc item="lang"}}
+	-In the //[[CompilerOptlang|-lang qb]]// dialect, the compiler assumes ##**Field = 1**## by default, if no other ##**Field**## was specified, causing all structures to be tightly packed, without added padding, as in QB.
+
+{{fbdoc item="diff"}}
+	- In QB ##**Field**## was used to define fields in a file buffer at run time. This feature is not implemented in FB, so the keyword has been redefined. To define fields in a file buffer, ##**[[KeyPgType|Type]]s**## must be used.
+
+{{fbdoc item="see"}}
+	- ##[[KeyPgType|Type]]##
+	- ##[[KeyPgUnion|Union]]##
+	- [[DevStructLayout|Structure packing/field alignment]]
+
+{{fbdoc item="back" value="CatPgUserDefTypes|User Defined Types"}}

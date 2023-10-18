@@ -1,0 +1,60 @@
+{{fbdoc item="title" value="ASC"}}----
+Returns the corresponding ASCII or Unicode integer representation of a character.
+
+{{fbdoc item="syntax"}}##
+	[[KeyPgDeclare|declare]] [[KeyPgFunction|function]] **Asc** ( [[KeyPgByref|byref]] //str// [[KeyPgAs|as]] [[KeyPgConstQualifier|const]] [[KeyPgString|string]], [[KeyPgByval|byval]] //position// [[KeyPgAs|as]] [[KeyPgInteger|integer]] = 1 ) [[KeyPgAs|as]] [[KeyPgUlong|ulong]]
+	[[KeyPgDeclare|declare]] [[KeyPgFunction|function]] **Asc** ( [[KeyPgByval|byval]] //str// [[KeyPgAs|as]] [[KeyPgConstQualifier|const]] [[KeyPgZstring|zstring]] [[KeyPgPtr|ptr]], [[KeyPgByval|byval]] //position// [[KeyPgAs|as]] [[KeyPgInteger|integer]] = 1 ) [[KeyPgAs|as]] [[KeyPgUlong|ulong]]
+	[[KeyPgDeclare|declare]] [[KeyPgFunction|function]] **Asc** ( [[KeyPgByval|byval]] //str// [[KeyPgAs|as]] [[KeyPgConstQualifier|const]] [[KeyPgWstring|wstring]] [[KeyPgPtr|ptr]], [[KeyPgByval|byval]] //position// [[KeyPgAs|as]] [[KeyPgInteger|integer]] = 1 ) [[KeyPgAs|as]] [[KeyPgUlong|ulong]]
+##
+{{fbdoc item="usage"}}##
+	//result// = **Asc**( //str// [, //position// ] )
+##
+{{fbdoc item="param"}}
+	##//str//##
+		The source string.
+	##//position//##
+		The position in the string of a character.
+
+{{fbdoc item="ret"}}
+	The raw character value stored at ##//position//## in ##//str//##.
+	If both ##//str//## and ##//position//## can be evaluated at compile time (like ##**Asc**("a")## or ##**Asc**(chr(97))## or ##**Asc**("abc", 2)## ...), the value is returned in a ##[[KeyPgUinteger|uinteger]]## result, otherwise in a ##[[KeyPgUlong|ulong]]## result.
+
+{{fbdoc item="desc"}}
+	If ##//str//## is a ##[[KeyPgString|String]]## or a ##[[KeyPgZstring|ZString]]##, the ##[[KeyPgUbyte|UByte]]## value at that ##//position//## is returned. This will be a 7-bit [[CptAscii|ASCII]] code, or even a 8-bit character value from some code-page, depending on the string data stored in ##//str//##.
+	
+	If ##//str//## is a ##[[KeyPgWstring|WString]]##, the ##[[KeyPgUshort|UShort]]## (Windows) or ##[[KeyPgUlong|ULong]]## (Linux) value at that ##//position//## is returned. This will be a 16bit value on Windows (WStrings use UTF16 there), or a 32bit value on Linux (WStrings use UTF32 there).
+	
+	The function returns zero (##0##) if the string is a zero length string, ##//position//## is less than one (##1##), or ##//position//## is greater than the number of characters in ##//str//##.
+	
+	##[[KeyPgChr|Chr]]## performs the opposite function for ASCII strings, while ##[[KeyPgWchr|WChr]]## is the opposite for Unicode strings, returning a string containing the character represented by the code passed as an argument.
+
+{{fbdoc item="ex"}}
+	{{fbdoc item="filename" value="examples/manual/strings/asc.bas"}}%%(freebasic)
+print "the ascii code of 'a' is:"; asc("a")
+print "the ascii code of 'b' is:"; asc("abc", 2)
+%%
+		will produce the output:
+		%%the ascii code of 'a' is: 97
+the ascii code of 'b' is: 98
+%%
+	Unicode example (Note to documentation editors: don't put inside ""%%(qbasic)"" markers or the Russian text will disappear!)
+	<<##dim a as wstring * 12
+	a = "&#1055;&#1088;&#1080;&#1074;&#1077;&#1090;, &#1084;&#1080;&#1088;"
+	print "the Unicode of the second char of " & a & " is: " & asc(a, 2)##<<
+		::c::will produce the output:
+		<<##the Unicode of the second char of &#1055;&#1088;&#1080;&#1074;&#1077;&#1090;, &#1084;&#1080;&#1088; is: 1088##<<
+		::c::
+{{fbdoc item="target"}}
+	- DOS does not support the wide-character string version of ##**ASC**##.
+
+{{fbdoc item="diff"}}
+	- The optional ##//position//## argument is new to ""FreeBASIC"".
+	- QB does not support the wide-character string version of ##**ASC**##
+
+{{fbdoc item="see"}}
+	- [[CptAscii|ASCII Character Codes]]
+	- ##[[KeyPgChr|Chr]]##
+	- ##[[KeyPgStr|Str]]##
+	- ##[[KeyPgVal|Val]]##
+
+{{fbdoc item="back" value="CatPgString|String Functions"}}

@@ -1,0 +1,154 @@
+{{fbdoc item="title" value="MUTEXCREATE"}}----
+Creates a mutex used for synchronizing the execution of threads
+
+{{fbdoc item="syntax"}}##
+	[[KeyPgDeclare|declare]] [[KeyPgFunction|function]] **Mutexcreate** ( ) [[KeyPgAs|as]] [[KeyPgAny|any]] [[KeyPgPtr|ptr]]
+##
+{{fbdoc item="usage"}}##
+	//result// = **Mutexcreate**
+##
+{{fbdoc item="ret"}}
+	The ##[[KeyPgAny|any]] [[KeyPgPtr|ptr]]## handle of the mutex created, or the null pointer (0) on failure.
+
+{{fbdoc item="desc"}}
+	Mutexes, short for "Mutually Exclusive", are a way of synchronizing shared data within threads.  If there is a global variable used by multiple threads (or a local static variable used by a single thread called multiple times), it should be "locked" during its use with a mutex.  This halts all threads using ##[[KeyPgMutexLock|Mutexlock]]## with that mutex (including the implicit main thread executing main program), until it is unlocked with ##[[KeyPgMutexUnlock|Mutexunlock]]##.
+	
+	##Mutexcreate## creates a mutex, returning a handle which is to be referred to when locking, unlocking, or destroying the mutex.  Mutexes created with ##Mutexcreate## should be destroyed when no longer needed or before the end of the program with ##[[KeyPgMutexDestroy|Mutexdestroy]]##.
+	
+	A  mutex is a lock that guarantees three things:
+	1. Atomicity - Locking a mutex is an atomic operation, meaning that the operating system (or threads library) assures you that if you locked a mutex, no other thread succeeded in locking this mutex at the same time.
+	2. Singularity - If a thread managed to lock a mutex, it is assured that no other thread will be able to lock the thread until the original thread releases the lock.
+	3. Non-Busy Wait - If a thread attempts to lock a thread that was locked by a second thread, the first thread will be suspended (and will not consume any CPU resources) until the lock is freed by the second thread. At this time, the first thread will wake up and continue execution, having the mutex locked by it. 
+
+{{fbdoc item="ex"}}
+	See also the ##[[KeyPgThreadCreate|Threadcreate]]## examples.
+
+{{fbdoc item="filename" value="examples/manual/threads/mutexcreate.bas"}}%%(freebasic)
+'Visual example of mutual exclusion between 2 threads by using Mutex:
+'the "user-defined thread" computes the points coordinates on a circle,
+'and the "main thread" plots the points.
+'
+'Principle of mutual exclusion
+'          Thread#A                XOR                  Thread#B
+'.....                                         .....
+'MutexLock(mut)                                MutexLock(mut)
+'  Do_something#A_with_exclusion                 Do_something#B_with_exclusion
+'MutexUnlock(mut)                              MutexUnlock(mut)
+'.....                                         .....
+'
+'Behavior:
+'- The first point must be pre-calculated.
+'- Nothing prevents that a same calculated point could be plotted several times
+'(depends on execution times of the loops between main thread and user thread).
+'- Nothing prevents that a calculated point could be not plotted
+'(same remark on the loop times).
+'
+'If you comment out the lines containing "MutexLock" and "MutexUnlock"
+'(inside "user-defined thread" or/and "main thread"),
+'there will be no longer mutual exclusion between computation of coordinates and plotting of points,
+'and many points will not be plotted on circle (due to non coherent coordinates).
+
+'-----------------------------------------------------------------------------------------------------
+
+Type ThreadUDT                                   'Generic user thread UDT
+	Dim handle As Any Ptr                        'Any Ptr handle to user thread
+	Dim sync As Any Ptr                          'Any Ptr handle to mutex
+	Dim quit As Byte                             'Boolean to end user thread
+	Declare Static Sub Thread (ByVal As Any Ptr) 'Generic user thread procedure
+	Dim procedure As Sub (ByVal As Any Ptr)      'Procedure(Any Ptr) to be executed by user thread
+	Dim p As Any Ptr                             'Any Ptr to pass to procedure executed by user thread
+	Const false As Byte = 0                      'Constante "false"
+	Const true As Byte = Not false               'Constante "true"
+End Type
+
+Static Sub ThreadUDT.Thread (ByVal param As Any Ptr) 'Generic user thread procedure
+	Dim tp As ThreadUDT Ptr = param                  'Casting to generic user thread UDT
+	Do
+		Static As Integer I
+		MutexLock(tp->sync)                          'Mutex (Lock) for user thread
+		tp->procedure(tp->p)                         'Procedure(Any Ptr) to be executed by user thread
+		I += 1
+		Locate 30, 38
+		Print I;
+		MutexUnlock(tp->sync)                        'Mutex (Unlock) for user thread
+		Sleep 5, 1
+	Loop Until tp->quit = tp->true                   'Test for ending user thread
+End Sub
+
+'-----------------------------------------------------------------------------------------------------
+
+Type Point2D
+	Dim x As Integer
+	Dim y As Integer
+End Type
+
+Const x0 As Integer = 640 / 2
+Const y0 As Integer = 480 / 2
+Const r0 As Integer = 200
+Const pi As Single = 4 * Atn(1)
+
+Sub PointOnCircle (ByVal p As Any Ptr)
+	Dim pp As Point2D Ptr = p
+	Dim teta As Single = 2 * pi * Rnd
+	pp->x = x0 + r0 * Cos(teta)
+	Sleep 5, 1                         'To increase possibility of uncorrelated data occurrence
+	pp->y = y0 + r0 * Sin(teta)
+End Sub
+
+
+Screen 12
+Locate 30, 2
+Print "<any_key> : exit";
+Locate 30, 27
+Print "calculated:";
+Locate 30, 54
+Print "plotted:";
+
+Dim Pptr As Point2D Ptr = New Point2D
+PointOnCircle(Pptr)                   ' Computation for a first point valid on the circle
+
+Dim Tptr As ThreadUDT Ptr = New ThreadUDT
+Tptr->sync = MutexCreate
+Tptr->procedure = @PointOnCircle
+Tptr->p = Pptr
+Tptr->handle = ThreadCreate(@ThreadUDT.Thread, Tptr)
+
+Do
+	Static As Integer I
+	Sleep 5, 1
+	MutexLock(Tptr->sync)   'Mutex (Lock) for main thread
+	PSet (Pptr->x, Pptr->y) 'Plotting one point
+	I += 1
+	Locate 30, 62
+	Print I;
+	MutexUnlock(Tptr->sync) 'Mutex (Unlock) for main thread
+Loop Until Inkey <> ""
+ 
+Tptr->quit = Tptr->true
+ThreadWait(Tptr->handle)
+MutexDestroy(Tptr->sync)
+Delete Tptr
+Delete Pptr
+
+Sleep
+%%
+	See also the similar ##[[KeyPgCondCreate|Condcreate]]## example
+
+{{fbdoc item="lang"}}
+	- Threading is not allowed in the //[[CompilerOptlang|-lang qb]]// dialect.
+
+{{fbdoc item="target"}}
+	- The DOS version of ""FreeBASIC"" does not allow for threads, as the OS does not support them.
+	- In Linux the threads are always started in the order they are created, this can't be assumed in ""Win32"". It's an OS, not a ""FreeBASIC"" issue. 
+
+{{fbdoc item="diff"}}
+	- New to ""FreeBASIC""
+
+{{fbdoc item="see"}}
+	- ##[[KeyPgMutexDestroy|Mutexdestroy]]##
+	- ##[[KeyPgMutexLock|Mutexlock]]##
+	- ##[[KeyPgMutexUnlock|Mutexunlock]]##
+	- ##[[KeyPgThreadCreate|Threadcreate]]##
+	- ##[[KeyPgThreadWait|Threadwait]]##
+
+{{fbdoc item="back" value="CatPgThreading|Threading Support Functions"}}

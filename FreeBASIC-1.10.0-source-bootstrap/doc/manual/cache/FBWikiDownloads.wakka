@@ -1,0 +1,31 @@
+{{fbdoc item="title" value="FreeBASIC Manual Downloads"}}----
+
+Information about the latest (and previous) FreeBASIC releases including the documentation, can be found on the forum: [[https://www.freebasic.net/forum/viewforum.php?f=1|FreeBASIC News]]
+
+The actual documentation files can be found on ""SourceForge"".
+~For the latest release, see: [[https://sourceforge.net/projects/fbc/files/Documentation/|Documentation]]
+~And and for older versions, see: [[https://sourceforge.net/projects/fbc/files/Older%20versions/|Older versions]]
+
+Any downloadable documentation made available is a snapshot of the [[https://www.freebasic.net/wiki/|wiki]] available at the time of the compiler's packaged release.
+
+The documentation is generated in five different formats (except for some of the older versions):
+
+{{fbdoc item="section" value="FB-manual-<version>-chm.zip"}}
+As Compiled HTML file. The CHM contains web-like pages with a tree index.
+With a CHM-viever, one can easily search the documentation.
+The Microsoft Windows OS includes a CHM-viever by default, but downloaded CHM files can be blocked by the OS (a CHM file can contain malicious code).
+For linux there are several viewers, e.g. xCHM and ""KchmViewer"".
+
+{{fbdoc item="section" value="FB-manual-<version>-html.zip"}}
+Offline HTML pages (start at 00index.html)
+
+{{fbdoc item="section" value="FB-manual-<version>-fbhelp.zip"}}
+For the fbhelp program (QB-like help viewer). Web-like pages with no index.
+
+{{fbdoc item="section" value="FB-manual-<version>-txt.zip"}}
+As one .txt file, e.g. for printing to paper. A linear list without index.
+
+{{fbdoc item="section" value="FB-manual-<version>-wakka.zip"}}
+The wiki pages in their original fomat. Normally only useful if you run a ""WikkaWiki"" server.
+
+{{fbdoc item="back" value="FBWiki|Main Page"}}

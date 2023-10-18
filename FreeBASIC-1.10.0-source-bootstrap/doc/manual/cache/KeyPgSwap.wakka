@@ -1,0 +1,41 @@
+{{fbdoc item="title" value="SWAP"}}----
+Exchanges the values of two variables
+
+{{fbdoc item="syntax"}}##
+	[[KeyPgDeclare|declare]] [[KeyPgSub|sub]] **Swap**  ( [[KeyPgByref|byref]] //a// [[KeyPgAs|as]] [[KeyPgAny|any]], [[KeyPgByref|byref]] //b// [[KeyPgAs|as]] [[KeyPgAny|any]] )
+##
+{{fbdoc item="usage"}}##
+	**Swap** //a//, //b//
+##
+{{fbdoc item="param"}}
+	##//a//##
+		A variable to swap.
+	##//b//##
+		A variable to swap.
+
+{{fbdoc item="desc"}}
+	Swaps the value of two variables, including UDT instances (swaps all data members).
+	
+	**Note:** When the data are referenced by a pointer, alone or within a descriptive structure (a UDT, for example), ##**Swap**## only exchanges the values of the pointers or the contents of the descriptive structures without accessing data themselves.
+	For var-len strings, ##**Swap**## only exchanges the descriptors of the strings rather than reallocate memory for exchange all strings data characters.
+	For UDTs, ##**Swap**## simply exchanges the contents of the structures, without any operators or methods being called.
+
+{{fbdoc item="ex"}}
+{{fbdoc item="filename" value="examples/manual/memory/swap.bas"}}%%(freebasic)
+' using swap to order 2 numbers:
+dim a as integer, b as integer
+
+input "input a number: "; a
+input "input another number: "; b
+if a > b then swap a, b
+print "the numbers, in ascending order are:"
+print a, b
+%%
+
+{{fbdoc item="diff"}}
+	- None
+
+{{fbdoc item="see"}}
+	- ##[[KeyPgOpAssignment|Operator = (Assignment)]]##
+
+{{fbdoc item="back" value="CatPgMemory|Memory Functions"}}

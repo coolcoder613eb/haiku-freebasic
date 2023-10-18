@@ -1,0 +1,47 @@
+{{fbdoc item="title" value="PEEK"}}----
+Gets the value of an arbitrary type at an address in memory
+
+{{fbdoc item="syntax"}}##
+	[[KeyPgDeclare|declare]] [[KeyPgFunction|function]] **Peek** ( [[KeyPgByval|byval]] //address// [[KeyPgAs|as]] [[KeyPgAny|any]] [[KeyPgPtr|ptr]] ) [[KeyPgByrefFunction|byref]] [[KeyPgAs|as]] [[KeyPgUbyte|ubyte]]
+	[[KeyPgDeclare|declare]] [[KeyPgFunction|function]] **Peek** ( //datatype//, [[KeyPgByval|byval]] //address// [[KeyPgAs|as]] [[KeyPgAny|any]] [[KeyPgPtr|ptr]] ) [[KeyPgByrefFunction|byref]] [[KeyPgAs|as]] //datatype//
+##
+{{fbdoc item="usage"}}##
+	**Peek**( [ //datatype//, ] //address// )
+##
+{{fbdoc item="param"}}
+	##//address//##
+		The address in memory to get the value from.
+	##//datatype//##
+		The type of value to get. If omitted, ##[[KeyPgUbyte|ubyte]]## is assumed.
+
+{{fbdoc item="desc"}}
+	This procedure returns a reference to the value in memory given by a memory address, and is equivalent to:
+		##*cast(ubyte ptr, //address//)##
+			or
+		##*cast(//datatype// ptr, //address//)##
+	thus this keyword can also be used to assign a value to a memory location, similarly to ##[[KeyPgPoke|Poke]]##.
+	
+	**Note:** When using ##**Peek**##, the //[[CompilerOptexx|-exx]]// compiler option does not add code for null-pointer checking (no nullity test on the value of ##//address//##).
+
+{{fbdoc item="ex"}}
+{{fbdoc item="filename" value="examples/manual/memory/peek.bas"}}%%(freebasic)
+Dim i As Integer, p As Integer Ptr
+p = @i
+
+Poke Integer, p, 420
+Print Peek(Integer, p)
+%%
+	will produce the output:
+
+%%420
+%%
+
+{{fbdoc item="diff"}}
+	- **##Peek##** did not support the ##//datatype//## parameter in QB, and could only return individual bytes.
+	- **##Peek##** returns a reference in FB, so can be used to set the memory contents of the address, like with ##[[KeyPgOpValueOf|Operator * (Value of)]]##.
+	- ##DEF SEG## isn't needed anymore because the address space is 32-bit flat in ""FreeBASIC"".
+
+{{fbdoc item="see"}}
+	- ##[[KeyPgPoke|Poke]]##
+	- ##[[KeyPgOpValueOf|Operator * (Value of)]]##
+{{fbdoc item="back" value="CatPgMemory|Memory Functions"}}

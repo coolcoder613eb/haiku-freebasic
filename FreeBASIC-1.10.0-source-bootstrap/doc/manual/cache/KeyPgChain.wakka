@@ -1,0 +1,47 @@
+{{fbdoc item="title" value="CHAIN"}}----
+Temporarily transfers control to an external program
+
+{{fbdoc item="syntax"}}##
+	[[KeyPgDeclare|declare]] [[KeyPgFunction|function]] **Chain** ( [[KeyPgByref|byref]] //program// [[KeyPgAs|as]] [[KeyPgConstQualifier|const]] [[KeyPgString|string]] ) [[KeyPgAs|as]] [[KeyPgLong|long]]
+##
+{{fbdoc item="usage"}}##
+	//result// = **Chain**( //program// )
+##
+{{fbdoc item="param"}}
+	##//program//##
+		The file name (including file path) of the program (executable) to transfer control to.
+
+{{fbdoc item="ret"}}
+		Returns the external program's exit code if executed successfully, or negative one (-1) otherwise.
+
+{{fbdoc item="desc"}}
+	Transfers control over to an external program. When the program exits, execution resumes immediately after the call to ##**Chain**##.
+
+{{fbdoc item="ex"}}
+	{{fbdoc item="filename" value="examples/manual/system/chain.bas"}}%%(freebasic)
+#ifdef __FB_LINUX__
+	dim as string program = "./program"
+#else
+	dim as string program = "program.exe"
+#endif
+
+print "Running " & program & "..."
+if (chain(program) <> 0) then
+	print program & " not found!"
+end if
+%%
+
+{{fbdoc item="target"}}
+	- Linux requires the ##//program//## name case matches the real name of the file. Windows and DOS  are case insensitive. The program  chained may be case sensitive for its command line parameters.
+	- Path separators in Linux are forward slashes / . Windows uses backward slashes \ but it allows for forward slashes .  DOS uses backward  \ slashes.
+	- Exit code is limited to 8 bits in DOS.
+
+{{fbdoc item="diff"}}
+	- ##[[KeyPgCommon|Common]]## does not allow to keep the values of certain variables when chaining programs with ##**Chain**##.
+
+{{fbdoc item="see"}}
+	- ##[[KeyPgExec|Exec]]## transfer temporarily, with arguments  
+	- ##[[KeyPgRun|Run]]## one-way transfer
+	- ##[[KeyPgCommand|Command]]## pick arguments
+
+{{fbdoc item="back" value="CatPgOpsys|Operating System Functions"}}

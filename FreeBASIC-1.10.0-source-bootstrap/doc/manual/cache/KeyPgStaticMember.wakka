@@ -1,0 +1,138 @@
+{{fbdoc item="title" value="STATIC (Member)"}}----
+Declare a static member procedure or variable
+
+{{fbdoc item="syntax"}}##
+	[[KeyPgType|Type]] //typename//
+		**Static** //variablename// [[KeyPgAs|As]] [[DataType|DataType]] [, ...]
+		[[KeyPgDeclare|Declare]] **Static** [[KeyPgSub|Sub]]|[[KeyPgFunction|Function]] //procedurename// ...
+		...
+	[[KeyPgEndblock|End]] [[KeyPgType|Type]]
+	
+	[[KeyPgDim|Dim]] //typename.variablename// [[KeyPgAs|As]] [[DataType|DataType]] [= //initializer//] [, ...]
+	
+	[**Static**] [[KeyPgSub|Sub]]|[[KeyPgFunction|Function]] //typename//.//procedurename// ...
+		...
+	End [[KeyPgSub|Sub]]|[[KeyPgFunction|Function]]
+##
+{{fbdoc item="desc"}}
+	- Static member procedures
+		##**Static**## methods do not have an implicit ##[[KeyPgThis|This]]## instance argument passed to them. This allows them to be used like normal non-member procedures (for example with callback procedure pointers).  An advantage of ##**Static**## methods are that they are encapsulated in the ##//typename//## namespace, and therefore have the ability to access the ##[[KeyPgVisPrivate|Private]]## or ##[[KeyPgVisProtected|Protected]]## members or methods of instances of ##//typename//##.
+		
+		##**Static**## methods can be called directly anywhere in code, like normal non-member procedures, or on objects of type ##//typename//##, similar to non-static methods, however either way there is no implicit or explicit ##[[KeyPgThis|This]]## (or explicit ##[[KeyPgBase|Base]]##) access possible from within a static method.
+		
+		For member procedures with a ##**Static**## declaration, ##**Static**## may also be specified on the corresponding procedure bodies, for improved code readability.
+		
+	- Static member variables
+		##**Static**## member variables are created and initialized only once independently of any object construction, in contrast to non-static ("instance") member variables which are created again and again for each separate object. ##**Static**## members are always ##[[KeyPgShared|Shared]]##, even if ##[[KeyPgShared|Shared]]## was not specified in the declaration. Thus, ##**Static**## member variables are similar to global variables, except that they are declared in a ##**Type**## namespace.
+		
+		Each ##**Static**## member variable declared in a Type must be explicitly allocated somewhere outside the type by using a ##[[KeyPgDim|Dim]]## statement. The declaration inside the Type is the prototype that is visible to every module seeing the Type declaration. The definition outside the Type allocates and optionally initializes the ##**Static**## member variable. There can only be one definition per ##**Static**## member variable: it can only be allocated in a single module, not in multiple ones. This is the same as for ##[[KeyPgExtern|Extern]]## variables.
+		
+		A ##**Static**## member variable is subject to member access control except for its definition outside the Type. If a private ##**Static**## member variable is to be explicitly initialized outside the Type's member procedures, an initializer must be provided with the definition.
+
+{{fbdoc item="ex"}}
+{{fbdoc item="filename" value="examples/manual/udt/static.bas"}}%%(freebasic)
+'' Example showing how the actual procedure invoked by a member can be set at runtime.
+'' using static member procedures.
+type _Object
+
+  enum handlertype
+	ht_default
+	ht_A
+	ht_B
+  end enum
+
+  declare constructor( byval ht as handlertype = ht_default)
+
+  declare sub handler()
+
+private:
+  declare static sub handler_default( byref obj as _Object )
+  declare static sub handler_A( byref obj as _Object )
+  declare static sub handler_B( byref obj as _Object )
+  handler_func as sub( byref obj as _Object )
+
+end type
+
+constructor _Object( byval ht as handlertype )
+  select case ht
+  case ht_A
+	handler_func = @_Object.handler_A
+  case ht_B
+	handler_func = @_Object.handler_B
+  case else
+	handler_func = @_Object.handler_default
+  end select
+end constructor
+
+sub _Object.handler()
+  handler_func(this)
+end sub
+
+sub _Object.handler_default( byref obj as _Object )
+  print "Handling using default method"
+end sub
+
+sub _Object.handler_A( byref obj as _Object )
+  print "Handling using method A"
+end sub
+
+sub _Object.handler_B( byref obj as _Object )
+  print "Handling using method B"
+end sub
+
+dim objects(1 to 4) as _Object => _
+  { _
+	_Object.handlertype.ht_B, _
+	_Object.handlertype.ht_default, _
+	_Object.handlertype.ht_A _
+  }
+  '' 4th array item will be _Object.handlertype.ht_default
+
+for i as integer = 1 to 4
+  print i,
+  objects(i).handler()
+next i
+%%
+
+{{fbdoc item="filename" value="examples/manual/udt/static2.bas"}}%%(freebasic)
+'' Assign an unique ID to every instance of a Type (ID incremented in order of creation)
+
+Type UDT
+  Public:
+	Declare Property getID () As integer
+	Declare Constructor ()
+  Private:
+	Dim As Integer ID
+	Static As Integer countID
+End Type
+Dim As Integer UDT.countID = 0
+
+Property UDT.getID () As Integer
+  Property = This.ID
+End Property
+
+Constructor UDT ()
+  This.ID = UDT.countID
+  UDT.countID += 1
+End Constructor
+
+
+Dim As UDT uFirst
+Dim as UDT uSecond
+Dim As UDT uThird
+
+Print uFirst.getID
+Print uSecond.getID
+Print uThird.getID
+%%
+
+{{fbdoc item="diff"}}
+	- New to ""FreeBASIC""
+
+{{fbdoc item="see"}}
+	- ##[[KeyPgClass|Class]]##
+	- ##[[KeyPgDeclare|Declare]]##
+	- ##[[KeyPgType|Type]]##
+	- ##[[KeyPgStatic|Static]]##
+
+{{fbdoc item="back" value="CatPgProcedures|Procedures"}}{{fbdoc item="back" value="CatPgUserDefTypes|User Defined Types"}}

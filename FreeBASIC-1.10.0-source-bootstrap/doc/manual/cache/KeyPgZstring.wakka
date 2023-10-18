@@ -1,0 +1,54 @@
+{{fbdoc item="title" value="ZSTRING"}}----
+Standard data type: 8 bit character string
+
+{{fbdoc item="syntax"}}##
+	[[KeyPgDim|dim]] //variable// [[KeyPgAs|as]] **Zstring** * //size//
+	[[KeyPgDim|dim]] //variable// [[KeyPgAs|as]] **Zstring** [[KeyPgPtr|ptr]]
+##
+{{fbdoc item="desc"}}
+	A ##**Zstring**## is a C-style fixed-size array of chars.  It has no descriptor so its length is calculated faster to pass it as an argument to functions. When the variable has a fixed ##//size//## (numeric constant, or expression that can be evaluated at compile time), ""FreeBASIC"" avoids any overflow that could occur on assignment, by truncating the contents to a length of ##//size// - 1##.
+	
+	A ##**Zstring** [[KeyPgPtr|ptr]]## can point to a standard ##**Zstring**##, also can be used to implement an "user-managed" ##**Zstring**##, in this case ##[[KeyPgAllocate|Allocate]]##/##[[KeyPgReallocate|Reallocate]]##/##[[KeyPgDeallocate|Deallocate]]## must be used to size-resize-dispose it and is up  to the user to avoid overflows . 
+	
+	The end of the string is marked by a null character (##0## ASCII). This is automatically added by the ""FreeBASIC"" string handling functions.  A null character will be appended when the string is created, and the length will be calculated by scanning the string for the first null character. A null character (e.g. ##[[KeyPgChr|Chr]](0)##) may never be contained in the text of a ##**Zstring**## or the rest of the string will be truncated.
+	
+	In a ##**Zstring**##, ##[[KeyPgLen|Len]]## returns the size of the contained string and ##[[KeyPgSizeof|Sizeof]]## returns the space allocated to the ##**Zstring**##.  ##[[KeyPgSizeof|Sizeof]]## only works if the size is known by the compiler, i.e. a fixed-size ##**Zstring**## variable is passed directly, not as a dereferenced pointer or a ##[[KeyPgByref|Byref]]## function argument.
+	
+	Any intrinsic string functions like ##[[KeyPgLeft|Left]]## will work with ##**Zstring**##'s too, plus any string operator.
+	
+	This type is provided for easy interfacing with C libraries and to also replace the fixed-length strings, that can't be managed through pointers.
+	Any string type argument may be directly passed to a procedure referring to a parameter declared as ##**Zstring** [[KeyPgPtr|ptr]]##. The compiler performs itself an automatic conversion (without warning message) between any string type argument and the ##**Zstring** [[KeyPgPtr|ptr]]## type parameter.
+	
+	When allocating dynamic memory for a ##**Zstring**##, the safest is to use ##[[KeyPgCallocate|Callocate]]## (or at worst, to use ##[[KeyPgAllocate|Allocate]]## followed by an immediate assignment of the string data, as in the second example), in order to avoid creating string data without any null character (the terminal character for a ##**Zstring**##).
+	
+	**Note :** When any operand of a binary operator (as assignment, equal, +, *, ...) consists in dereferencing a '##Zstring Ptr##' pointer ('##pz##'), this can give a '##Zstring##' string or a '##Ubyte##' variable, depending on the other operand. If the other operand is numeric, so the dereferenced '##Zstring Ptr##' pointer ('##*pz##') will be treated as a '##Ubyte##' reference to the one character pointed. If a '##Zstring##' pointer indexing '##[]##' operator is used as dereferencing syntax ('##pz[n]##'), it is basically a short-cut version of the '##String##' indexing '##[]##' operator ('##(*pz)[n]##').
+
+{{fbdoc item="ex"}}
+{{fbdoc item="filename" value="examples/manual/datatype/zstring.bas"}}%%(freebasic)
+dim as zstring * 13 str1 => "hello, world"
+print str1
+print len(str1)     'returns 12, the size of the string it contains 
+print sizeof(str1)  'returns 13, the size of the variable
+%%
+
+{{fbdoc item="filename" value="examples/manual/datatype/zstring2.bas"}}%%(freebasic)
+dim as zstring ptr str2
+str2 = allocate( 13 )
+*str2 = "hello, world"
+print *str2
+print len(*str2)     'returns 12, the size of the string it contains 
+%%
+
+{{fbdoc item="lang"}}
+	- Not available in the //[[CompilerOptlang|-lang qb]]// dialect unless referenced with the alias ##**""__Zstring""**##.
+
+{{fbdoc item="diff"}}
+	- New to ""FreeBASIC""
+
+{{fbdoc item="see"}}
+	- ##[[KeyPgString|String]]##
+	- ##[[KeyPgWstring|Wstring]]##
+	- ##[[TblVarTypes|Standard Data Type Limits]]##
+	- ##[[KeyPgExtendsZstring|Extends Zstring]]##
+
+{{fbdoc item="back" value="CatPgStdDataTypes|Standard Data Types"}}{{fbdoc item="back" value="CatPgString|String Functions"}}

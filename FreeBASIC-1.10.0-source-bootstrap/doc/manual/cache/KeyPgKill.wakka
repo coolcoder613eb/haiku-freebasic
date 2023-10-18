@@ -1,0 +1,39 @@
+{{fbdoc item="title" value="KILL"}}----
+Deletes a file from disk / storage media.
+
+{{fbdoc item="syntax"}}##
+	[[KeyPgDeclare|declare]] [[KeyPgFunction|function]] **Kill** ( [[KeyPgByref|byref]] //filename// [[KeyPgAs|as]] [[KeyPgConstQualifier|const]] [[KeyPgString|string]] ) [[KeyPgAs|as]] [[KeyPgLong|long]]
+##
+{{fbdoc item="usage"}}##
+	//result// = **Kill**( //filename// )
+##
+{{fbdoc item="param"}}
+	##//filename//##
+		The //filename// is the name of the disk file to delete. If the file is not in the current directory, the path must also be given as ##**//path/file//**##.
+
+{{fbdoc item="ret"}}
+	Returns zero (##0##) on success, or non-zero on error.
+
+{{fbdoc item="desc"}}
+	##**Kill**## deletes a file from disk / storage media.
+	
+	The error code returned by ##**Kill**## can be checked using ##[[KeyPgErr|Err]]## in the next line. The function version of  ##**Kill**## returns directly the error code as a 32 bit ##[[KeyPgLong|Long]]##.
+ 
+{{fbdoc item="ex"}}
+	{{fbdoc item="filename" value="examples/manual/system/kill.bas"}}%%(freebasic)
+Dim filename As String = "file.ext"
+Dim result As Long = Kill( filename )
+
+If result <> 0 Then Print "error trying to kill " ; filename ; " !"
+%%
+{{fbdoc item="target"}}
+	On some platforms, ##**Kill**## may be able to remove folders and read-only files.  Whether it succeeds or fails here is not currently defined.  It may be necessary to check the attributes of the file you are deleting, and decide accordingly whether you want to try ##**Kill**##ing it.
+
+{{fbdoc item="diff"}}
+	- KILL can optionally be used as function in ""FreeBASIC"".
+
+{{fbdoc item="see"}}
+	- ##[[KeyPgShell|Shell]]##
+	- ##[[KeyPgRmdir|Rmdir]]##
+
+{{fbdoc item="back" value="CatPgOpsys|Operating System Functions"}}

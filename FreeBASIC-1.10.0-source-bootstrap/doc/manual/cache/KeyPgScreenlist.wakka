@@ -1,0 +1,51 @@
+{{fbdoc item="title" value="SCREENLIST"}}----
+Finds available fullscreen video modes
+
+{{fbdoc item="syntax"}}##
+	[[KeyPgDeclare|declare]] [[KeyPgFunction|function]] **Screenlist** ( [[KeyPgByval|byval]] //depth// [[KeyPgAs|as]] [[KeyPgLong|long]] = 0 ) [[KeyPgAs|as]] [[KeyPgLong|long]]
+##
+{{fbdoc item="usage"}}##
+	//result// = **Screenlist**( [ //depth// ] )
+##
+{{fbdoc item="param"}}
+	##//depth//##
+		the color depth for which the list of modes is requested  (supported depths are ##8##, ##15##, ##16##, ##24## and ##32##)
+
+{{fbdoc item="ret"}}
+	returns ##0##, when there are no more resolutions to read.
+
+{{fbdoc item="desc"}}
+	It works like the ##[[KeyPgDir|Dir]]## function: the first call to the function requires the ##//depth//## parameter to be specified, it  returns the lowest supported resolution for the requested depth. Further calls to ##**Screenlist**## without arguments returns the next resolutions. When no more resolutions are available, ##[[KeyPgScreenlist|Screenlist]]## returns ##0##.
+	
+	The result of ##[[KeyPgScreenlist|Screenlist]]## is encoded as a 32 bit value, with the screen width as the [[KeyPgHiword|high word]] and the height as the [[KeyPgLoWord|low word]].
+	
+	Resolutions are returned from lowest to highest supported ones. 
+	
+	It is safe to call this function before any graphics mode has been set.
+
+{{fbdoc item="ex"}}
+	{{fbdoc item="filename" value="examples/manual/gfx/screenlist.bas"}}%%(freebasic)
+Dim As Long mode
+Dim As Uinteger w, h
+
+Print "Resolutions supported at 8 bits per pixel:"
+
+mode = ScreenList(8)
+While (mode <> 0)
+	w = HiWord(mode)
+	h = LoWord(mode)
+	Print w & "x" & h
+	mode = ScreenList()
+Wend
+%%
+{{fbdoc item="lang"}}
+	- Not available in the //[[CompilerOptlang|-lang qb]]// dialect unless referenced with the alias ##**""__Screenlist""**##.
+
+{{fbdoc item="diff"}}
+	- New to ""FreeBASIC""
+
+{{fbdoc item="see"}}
+	- ##[[KeyPgScreengraphics|Screen]]##
+	- ##[[KeyPgScreenres|Screenres]]##
+
+{{fbdoc item="back" value="CatPgGfxScreen|Screen Functions"}}

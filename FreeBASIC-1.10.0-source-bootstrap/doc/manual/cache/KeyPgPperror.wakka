@@ -1,0 +1,35 @@
+{{fbdoc item="title" value="#ERROR"}}----
+Preprocessor diagnostic directive
+
+{{fbdoc item="syntax"}}##
+	**#error** //error_text//
+##
+{{fbdoc item="param"}}
+	##//error_text//##
+		The display message
+
+{{fbdoc item="desc"}}
+	##**#error**## interrupts compiling to display ##//error_text//## when compiler finds it, and then parsing continues. 
+	
+	This keyword must be surrounded by an ##[[KeyPgPpif|#if]] //<condition>//## ...##[[KeyPgPpendif|#endif]]##, so the compiler can reach ##**#error**## only if ##//<condition>//## is met.
+	
+	In any case, the final status will be "Failed to compile".
+
+{{fbdoc item="ex"}}
+{{fbdoc item="filename" value="examples/manual/prepro/error.bas"}}%%(freebasic)
+#define c 1
+
+#if c = 1
+  #error Bad value of c 
+#endif
+%%
+
+{{fbdoc item="diff"}}
+	- New to ""FreeBASIC""
+
+{{fbdoc item="see"}}
+	- ##[[KeyPgPpif|#if]]##
+	- ##[[KeyPgPpprint|#print]]##
+	- ##[[KeyPgPpassert|#assert]]##
+
+{{fbdoc item="back" value="CatPgPreProcess|Preprocessor"}}

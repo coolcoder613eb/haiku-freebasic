@@ -1,0 +1,16 @@
+{{fbdoc item="title" value="CASE"}}----
+Control flow statement
+
+{{fbdoc item="syntax"}}##
+	**Case** //expression//
+##
+{{fbdoc item="ex"}}
+	See example at ##[[KeyPgSelectcase|Select Case]]##.
+
+{{fbdoc item="diff"}}
+	- None
+
+{{fbdoc item="see"}}
+	- ##[[KeyPgSelectcase|Select Case]]##
+
+{{fbdoc item="back" value="CatPgControlFlow|Control Flow"}}

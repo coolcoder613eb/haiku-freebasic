@@ -1,0 +1,35 @@
+{{fbdoc item="title" value="PUBLIC"}}----
+Specifies a procedure having external linkage.
+
+{{fbdoc item="syntax"}}##
+	**Public** [[KeyPgSub|Sub]] //procedure_name// [[[KeyPgCdecl|Cdecl]]|[[KeyPgStdcall|Stdcall]]|[[KeyPgPascal|Pascal]]] [[[KeyPgOverload|Overload]]] [[[KeyPgAlias|Alias]] //"""external_name"""//] [([//parameter_list//])] [[[KeyPgModuleConstructor|Constructor]] [//priority//]] [[[KeyPgStatic|Static]]] [[[KeyPgExport|Export]]]
+		//..procedure body..//
+	[[KeyPgEnd|End]] [[KeyPgSub|Sub]]
+	
+	**Public** [[KeyPgFunction|Function]] //procedure_name// [[[KeyPgCdecl|Cdecl]]|[[KeyPgStdcall|Stdcall]]|[[KeyPgPascal|Pascal]]] [[[KeyPgOverload|Overload]]] [[[KeyPgAlias|Alias]] //"""external_name"""//] [([//parameter_list//])] [ [[KeyPgByrefFunction|byref]] ] [[KeyPgAs|as]] //return_type//  [[[KeyPgStatic|Static]]] [[[KeyPgExport|Export]]]
+		//..procedure body..//
+	[[KeyPgEnd|End]] [[KeyPgFunction|Function]]
+##
+{{fbdoc item="desc"}}
+	In procedure definitions (forbidden at declaration line level), ##**Public**## specifies that a procedure has external linkage, meaning its name is visible to external modules. If ##**Public**## or ##[[KeyPgPrivate|Private]]## is not specified, a procedure is defined as if ##**Public**## was specified.
+
+{{fbdoc item="ex"}}
+{{fbdoc item="filename" value="examples/manual/module/sub-public.bas"}}%%(freebasic)
+Private Sub i_am_private
+End Sub
+
+Public Sub i_am_public
+End Sub
+%%
+
+{{fbdoc item="diff"}}
+	- New to ""FreeBASIC""
+
+{{fbdoc item="see"}}
+	- ##[[KeyPgVisPublic|Public:]]## (Access Control)
+	- ##[[KeyPgPrivate|Private]]##
+	- ##[[KeyPgOptionprivate|Option Private]]##
+	- ##[[KeyPgSub|Sub]]##
+	- ##[[KeyPgFunction|Function]]##
+
+{{fbdoc item="back" value="CatPgModularizing|Modularizing"}}{{fbdoc item="back" value="CatPgProcedures|Procedures"}}

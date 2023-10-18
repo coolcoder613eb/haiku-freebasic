@@ -1,0 +1,262 @@
+{{fbdoc item="title" value="TYPE"}}----
+Declares a user-defined type.
+
+{{fbdoc item="syntax"}}##
+	**Type** //typename//
+		//fieldname1// [[KeyPgAs|As]] //[[DataType|DataType]]//
+		//fieldname2// [[KeyPgAs|As]] //[[DataType|DataType]]//
+		[[KeyPgAs|As]] //[[DataType|DataType]]// //fieldname3//, //fieldname4//
+		...
+	**End Type**
+	
+	**Type** //typename// [[[KeyPgAlias|Alias]] "alternatename"] [[[KeyPgExtends|Extends]] //base_typename//] [[[KeyPgField|Field]] = //alignment//]
+		[[[KeyPgVisPrivate|Private:]]|[[KeyPgVisPublic|Public:]]|[[KeyPgVisProtected|Protected:]]]
+		
+		[[KeyPgDeclare|Declare]] [[KeyPgMemberSub|Sub]]|[[KeyPgMemberFunction|Function]]|[[KeyPgConstructor|Constructor]]|[[KeyPgDestructor|Destructor]]|[[KeyPgProperty|Property]]|[[KeyPgOperator|Operator]] ...
+		[[KeyPgStatic|Static]] //variablename// [[KeyPgAs|As]] //[[DataType|DataType]]//
+		[[KeyPgRedim|Redim]] //arrayname(array dimensions)// [[KeyPgAs|As]] //[[DataType|DataType]]//
+		
+		//fieldname// [[KeyPgAs|As]] //[[DataType|DataType]]// [= //initializer//]
+		//fieldname//(//array dimensions//) [[KeyPgAs|As]] //[[DataType|DataType]]// [= //initializer//]
+		//fieldname//([[KeyPgAny|Any]] [, [[KeyPgAny|Any]]...]) [[KeyPgAs|As]] [[DataType|DataType]]
+		//fieldname// : //bits// [[KeyPgAs|As]] //[[DataType|DataType]]// [= //initializer//]
+		
+		[[KeyPgAs|As]] [[DataType|DataType]] //fieldname// [= //initializer//], ...
+		[[KeyPgAs|As]] [[DataType|DataType]] //fieldname//(//array dimensions//) [= //initializer//], ...
+		[[KeyPgAs|As]] [[DataType|DataType]] //fieldname//([[KeyPgAny|Any]] [, [[KeyPgAny|Any]]...])
+		[[KeyPgAs|As]] [[DataType|DataType]] //fieldname// : //bits// [= //initializer//], ...
+		
+		[[KeyPgUnion|Union]]
+			//fieldname// [[KeyPgAs|As]] //[[DataType|DataType]]//
+			**Type**
+				//fieldname// [[KeyPgAs|As]] //[[DataType|DataType]]//
+				...
+			**End Type**
+			...
+		[[KeyPgUnion|End Union]]
+		
+				
+		**Type** //typename2// ...
+			...
+		**End Type**
+		
+		...
+	**End Type**
+##
+{{fbdoc item="desc"}}
+	##**Type**## is used to declare custom data types containing one or more data fields, including integer types, floating point types, fixed-size or variable-length (dynamic) arrays, fixed-size or variable-length strings, bitfields, or other user-defined types.
+	
+	Types support various functionality related to object-oriented programming:
+		- Inheritance through the use of the [[KeyPgExtends|Extends]] keyword.
+		- Member procedures such as [[KeyPgMemberSub|subs]] or [[KeyPgMemberFunction|functions]], including ##[[KeyPgAbstract|Abstract]]## or ##[[KeyPgVirtual|Virtual]]## ones.
+		- Member procedures with special semantic meaning such as [[KeyPgConstructor|constructors]] or a [[KeyPgDestructor|destructor]].
+		- ##[[KeyPgStatic|Static]]## member variables.
+		- Member visibility specifiers: ##[[KeyPgVisPublic|Public:]]##, ##[[KeyPgVisPrivate|Private:]]##, ##[[KeyPgVisProtected|Protected:]]##.
+		
+
+	A ##**Type**## can also contain nested Types or Unions, of different kinds:
+		- Nested Anonymous Type/Union:
+				**""-""** Nested Anonymous Type/Union allows data members to be grouped as desired.
+				**""-""** Anonymous Type or Anonymous Union can be nested on condition of alternating their nesting.
+				**""-""** Nested Anonymous Type/Union can not have procedure members or static data members (same restriction than for a local scope named Type/Union).
+		- Nested Named Type/Union:
+				**""-""** Nested Named Type/Union allows declaration of an inner structure inside a (named) Type/Union namespace and according to the access right of the place
+				**""-""** Mostly everything it can be done in a Named Type/Union can also be done in a Nested Named Type/Union.
+				**""-""** When there are circular dependencies between Types/Unions, Nested Named Type/Union usage can avoid using type aliases and forward referencing.
+		- Nested Type-Def:
+				**""-""** Nested Type-Def allows declaration of an inner Type (Alias) inside a Type/Union and according to the access right of the place.
+	The main structure (Type/Union) must be always named, the other (nested) structures can be anonymous or named.
+	
+	##[[KeyPgAlias|Alias]] "alternatename"## specifies that if ##//typename//## must be encoded (mangled) in to a public symbol (as in an object module or library), then specifically use ##//alternate//## name instead of the usual encoding (mangling) of ##//typename//##.
+	
+	//Memory layout//
+	Types lay out their fields consecutively in memory, following the native alignment and padding rules (described on the ##[[KeyPgField|Field]]## page). Special care must be taken when using Types for file I/O or interacting with other programs or programming languages, in case the alignment and padding rules are different. The optional ##[[KeyPgField|Field]] = //number//## specifier can be used to change the behavior on the ""FreeBASIC"" side.
+	
+	//Variable-length data//
+	In ""FreeBASIC"", Type data structures must ultimately be fixed-size, such that the compiler knows how much memory to allocate for objects of that Type. Nevertheless, Types may contain variable-length (dynamic) string or array data members. However, the string's/array's data will not be embedded in the Type directly. Instead, the Type will only contain a ##[[KeyPgString|String]]##/array descriptor structure, which ""FreeBASIC"" uses behind the scenes to manage the variable-length string/array data. For sizing the structure of the array descriptor in the Type, a variable-length (dynamic) array data member must be always declared by using ##[[KeyPgAny|Any(s)]]## in place of the array bounds, in order to fix the amount of dimensions based on the number of Anys specified. A variable-length (dynamic) array data member can also be pre-sized in its declaration by using syntax with ##[[KeyPgRedim|Redim]]##.
+	Variable-length array fields are considered as pseudo-objects when they are declared in a ##**Type**##, just like variable-length strings (the implicit copy constructor and the implicit let operator themselves support [re]sizing and copying such arrays, or their erasing).
+	
+	Because of that, saving such a Type into a file will write out the descriptor, not the actual string/array data. In order to embed strings/arrays into Types directly, fixed-length strings/arrays must be used.
+	
+	Similarly, when maintaining dynamic data manually through the use of pointers within a Type, it does usually not make sense to save the Type to a file, because the address stored in the pointer field will be written to file, not the actual memory it points to. Addresses are meaningful to a specific process only though, and cannot be shared that way.
+	
+	//Special note on fixed-length strings//
+	Currently, fixed-length string fields of ##[[KeyPgString|String]] * //N//## type have an extra null terminator at their end, for compatibility with C strings, making them incompatible with QB strings inside Types, because they actually use up ##//N//+1## bytes, instead of just ##N## bytes. A possible work-around is to declare the field ##As [[KeyPgString|String]] * (//N//-1)##, though this will not work in future releases if the null terminator is removed.  Another alternative is to use a ##[[KeyPgByte|Byte]]## or ##[[KeyPgUbyte|UByte]]## array with the proper size.
+	
+	//Note on bitfields ( ##//fieldname// : //bits//## )//
+	Bitfields can only be declared inside a type or a union, and allow to specify some very small objects of a given number of bits in length. Each field is accessed and manipulated as if it were an ordinary member of the structure.
+	Only integer data-types (up to 32-bit for 32-bit development or 64-bit for 64-bit development) are valid. The sizes of the declared data-types, large enough to contain the bit patterns, affect how the bitfields are placed in memory.
+	Bitfield members in a type are packed together, unless the next member is a non-bitfield (nested union is considered a non-bitfield).
+	A bitfield does not have any address (one cannot get a pointer to it and its offset inside the structure).
+
+{{fbdoc item="ex"}}
+	This is an example of a QB-style type, not including procedure definitions
+		{{fbdoc item="filename" value="examples/manual/udt/type1.bas"}}%%(freebasic)
+TYPE clr
+	red AS UBYTE
+	green AS UBYTE
+	blue AS UBYTE
+END TYPE
+
+DIM c AS clr
+c.red = 255
+c.green = 128
+c.blue = 64
+%%
+	And this is an example of a type working as an object:
+		{{fbdoc item="filename" value="examples/manual/udt/type2.bas"}}%%(freebasic)
+'' Example showing the problems with fixed length string fields in UDTs
+'' Suppose we have read a GIF header from a file
+''                        signature         width        height
+dim as zstring*(10+1) z => "GIF89a" + mkshort(10) + mkshort(11)
+
+print "Using fixed-length string"
+
+type hdr1 field = 1
+   as string*(6-1) sig /' We have to dimension the string with 1 char
+						'  less to avoid misalignments '/
+   as ushort wid, hei
+end type
+
+dim as hdr1 ptr h1 = cptr(hdr1 ptr, @z)
+print h1->sig, h1->wid, h1->hei '' Prints GIF89 (misses a char!)  10  11
+
+'' We can do comparisons only with the 5 visible chars and creating a temporary string with LEFT
+
+if left(h1->sig, 5) = "GIF89" then print "ok" else print "error"
+
+
+'' Using a ubyte array, we need an auxiliary function to convert it to a string
+function ub2str( ub() as ubyte ) as string
+	dim as string res = space(ubound(ub) - lbound(ub) + 1)
+	for i as integer = lbound(ub) to ubound(ub)
+		res[i - Lbound(ub)] = ub(i)
+	next
+	function = res
+end function
+
+
+print
+print "Using an array of ubytes"
+
+type hdr2 field = 1
+   sig(0 to 6-1) as ubyte '' Dimension 6
+   as ushort wid, hei
+end type
+
+dim as hdr2 ptr h2 = cptr(hdr2 ptr, @z)
+'' Viewing and comparing is correct but a conversion to string is required
+
+print ub2str(h2->sig()), h2->wid, h2->hei '' Prints GIF89a  10  11 (ok)
+if ub2str(h2->sig()) = "GIF89a" then print "ok" else print "error" '' Prints ok
+%%
+	This is an example of conversion from an Ubyte to a digit string in base 8 (octal string), by using bitfields in a local UDT (conversion equivalent to 'Oct(x, 3)'):
+		{{fbdoc item="filename" value="examples/manual/udt/type3.bas"}}%%(freebasic)
+Function UbyteToOctalString (Byval b As Ubyte) As String
+ 
+	Union UbyteOctal
+		number As Ubyte
+		Type
+			d0 : 3 As Ubyte
+			d1 : 3 As Ubyte
+			d2 : 2 As Ubyte
+		End Type
+	End Union
+ 
+	Dim uo As UbyteOctal
+	uo.number = b
+	Return uo.d2 & uo.d1 & uo.d0
+ 
+End Function
+
+
+For I As Integer = 0 To 255
+	Print Using "###: "; I;
+''    Print Oct(I, 3),
+	Print UbyteToOctalString(I),  '' this line is thus equivalent to the previous one
+Next I
+Print
+
+Sleep
+%%
+	This is an example with Nested Named Type:
+		{{fbdoc item="filename" value="examples/manual/udt/type4.bas"}}%%(freebasic)
+Type Parent
+	Private:
+		Dim As String nameParent
+		Declare Constructor()
+		Declare Constructor(Byref As Parent)
+		Type Child
+			Dim As String nameChild
+			Dim As Parent Ptr ptrParent
+			Declare Sub kinship()
+		End Type
+		Dim As Child listChild(Any)
+	Public:
+		Declare Constructor(Byref _nameParent As String)
+		Declare Sub addChild(Byref _nameChild As String)
+		Declare Sub kinship()
+End Type
+
+Constructor Parent(Byref _nameParent As String)
+	This.nameParent = _nameParent
+End Constructor
+
+Sub Parent.addChild(Byref _nameChild As String)
+	Redim Preserve This.listChild(Ubound(This.listChild) + 1)
+	This.listChild(Ubound(This.listChild)).nameChild = _nameChild
+	This.listChild(Ubound(This.listChild)).ptrParent = @This
+End Sub
+
+Sub Parent.Child.kinship()
+	Print "'" & This.nameChild & "'" & " is child of " & "'" & This.ptrParent->nameParent & "'"
+End Sub
+
+Sub Parent.kinship()
+	For i As Integer = 0 To Ubound(This.listChild)
+		This.listChild(i).kinship()
+	Next i
+End Sub
+
+
+Dim As Parent p = Parent("Kennedy")
+p.addChild("John Jr.")
+p.addChild("Caroline")
+p.addChild("Patrick")
+p.kinship()
+
+Sleep
+%%
+{{fbdoc item="ver"}}
+	- Since fbc 1.10.0: Nested Named Type/Union capability added.
+
+{{fbdoc item="target"}}
+	- The default ##**Field**## alignment parameter is 4 bytes for DOS and Linux targets.
+	- The default ##**Field**## alignment parameter is 8 bytes for Windows targets (this difference with regard to 4 bytes applies only to Longint and Double members).
+	
+{{fbdoc item="lang"}}
+	- Object-related features such as functions declared inside ##**Type**## blocks are supported only with the //[[CompilerOptlang|-lang fb]]// dialect since version 0.17b
+	- In the //[[CompilerOptlang|-lang fb]]// and //[[CompilerOptlang|-lang fblite]]// dialects, the default ##**Field**## alignment parameter depends on the target platform.
+	- With the //[[CompilerOptlang|-lang qb]]// dialect the fields are aligned to byte boundaries by default, unless otherwise specified.
+	- To force byte alignment use ##FIELD=1##.
+
+{{fbdoc item="diff"}}
+	- At present, fixed-length strings have an extra, redundant character on the end, which means they take up one more byte than they do in QB.  For this reason, UDTs that use them are not compatible with QB when used for file I/O.
+
+{{fbdoc item="see"}}
+	- ##[[KeyPgTypeAlias|Type (Alias)]]##
+	- ##[[KeyPgTypeTemp|Type (Temporary)]]##
+	- ##[[KeyPgUnion|Union]]##
+	- ##[[KeyPgEnum|Enum]]##
+	- ##[[KeyPgTypeof|Typeof]]##
+	- ##[[KeyPgOffsetof|OffsetOf]]##
+	- ##[[KeyPgAlias|Alias (Name)]]##
+	- ##[[KeyPgField|Field]]##
+	- ##[[KeyPgExtends|Extends]]##
+	- ##[[KeyPgExtendsZstring|Extends Zstring]]##
+	- ##[[KeyPgExtendsWstring|Extends Wstring]]##
+	- ##[[KeyPgWith|With]]##
+	- ##[[TblVarTypes|Standard Data Type Limits]]##
+	- [[ProPgDataConversion|Coercion and Conversion]]
+
+{{fbdoc item="back" value="CatPgUserDefTypes|User Defined Types"}}

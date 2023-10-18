@@ -1,0 +1,10 @@
+{{fbdoc item="title" value="PDFlib"}}----
+Portable library for dynamically generating PDF documents
+
+Website: http://www.pdflib.com
+Platforms supported: ""Win32"", Linux
+Headers to include: pdflib.bi
+Header version: 4.0.2
+Examples: in examples/files/pdflib/
+
+{{fbdoc item="back" value="ExtLibTOC|External Library Table of Contents"}}

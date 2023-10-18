@@ -1,0 +1,64 @@
+{{fbdoc item="title" value="Operator + (Addition)"}}----
+Sums two expressions
+
+{{fbdoc item="syntax"}}##
+	[[KeyPgDeclare|declare]] [[KeyPgOperator|operator]] **+** ( [[KeyPgByref|byref]] //lhs// [[KeyPgAs|as]] [[KeyPgInteger|integer]], [[KeyPgByref|byref]] //rhs// [[KeyPgAs|as]] [[KeyPgInteger|integer]] ) [[KeyPgAs|as]] [[KeyPgInteger|integer]]
+	[[KeyPgDeclare|declare]] [[KeyPgOperator|operator]] **+** ( [[KeyPgByref|byref]] //lhs// [[KeyPgAs|as]] [[KeyPgUinteger|uinteger]], [[KeyPgByref|byref]] //rhs// [[KeyPgAs|as]] [[KeyPgUinteger|uinteger]] ) [[KeyPgAs|as]] [[KeyPgUinteger|uinteger]]
+	
+	[[KeyPgDeclare|declare]] [[KeyPgOperator|operator]] **+** ( [[KeyPgByref|byref]] //lhs// [[KeyPgAs|as]] [[KeyPgSingle|single]], [[KeyPgByref|byref]] //rhs// [[KeyPgAs|as]] [[KeyPgSingle|single]] ) [[KeyPgAs|as]] [[KeyPgSingle|single]]
+	[[KeyPgDeclare|declare]] [[KeyPgOperator|operator]] **+** ( [[KeyPgByref|byref]] //lhs// [[KeyPgAs|as]] [[KeyPgDouble|double]], [[KeyPgByref|byref]] //rhs// [[KeyPgAs|as]] [[KeyPgDouble|double]] ) [[KeyPgAs|as]] [[KeyPgDouble|double]]
+	
+	[[KeyPgDeclare|declare]] [[KeyPgOperator|operator]] **+** ( [[KeyPgByref|byref]] //lhs// [[KeyPgAs|as]] //T// [[KeyPgPtr|Pointer]], [[KeyPgByref|byref]] //rhs// [[KeyPgAs|as]] [[KeyPgInteger|integer]] ) [[KeyPgAs|as]] //T// [[KeyPgPtr|Pointer]]
+	[[KeyPgDeclare|declare]] [[KeyPgOperator|operator]] **+** ( [[KeyPgByref|byref]] //rhs// [[KeyPgAs|as]] [[KeyPgInteger|integer]], [[KeyPgByref|byref]] //lhs// [[KeyPgAs|as]] //T// [[KeyPgPtr|Pointer]] ) [[KeyPgAs|as]] //T// [[KeyPgPtr|Pointer]]
+	
+	[[KeyPgDeclare|declare]] [[KeyPgOperator|operator]] **+** ( [[KeyPgByref|byref]] //lhs// [[KeyPgAs|as]] //T//, [[KeyPgByref|byref]] //rhs// [[KeyPgAs|as]] [[KeyPgInteger|integer]] ) [[KeyPgAs|as]] //T//
+	[[KeyPgDeclare|declare]] [[KeyPgOperator|operator]] **+** ( [[KeyPgByref|byref]] //lhs// [[KeyPgAs|as]] [[KeyPgInteger|integer]], [[KeyPgByref|byref]] //rhs// [[KeyPgAs|as]] //T// ) [[KeyPgAs|as]] //T//
+##
+{{fbdoc item="usage"}}##
+	//result// = //lhs// **##+##** //rhs//
+##
+{{fbdoc item="param"}}
+	##//lhs//##
+		The left-hand side expression to sum.
+	##//rhs//##
+		The right-hand side expression to sum.
+	##//T//##
+		Any pointer type.
+
+{{fbdoc item="ret"}}
+	Returns the sum of two expressions.
+
+{{fbdoc item="desc"}}
+	When the left and right-hand side expressions are numeric values, **##Operator +## (Add)** returns the sum of the two values.
+	
+	When the left and right-hand side expressions are string values, **##Operator +## (Add)** concatenates the two strings and returns the result.
+	
+	If an integral value ##//n//## is added to a ##//T// [[KeyPgPtr|Pointer]]## type, the operator performs pointer arithmetic on the address, returning the memory position of a ##//T//## value, ##//n//## indices away (assuming ##//n//## is within bounds of a contiguous array of ##//T//## values).  This behaves differently from numeric addition, because the ##[[KeyPgInteger|Integer]]## value is scaled by ##[[KeyPgSizeof|Sizeof]]( //T// )##.
+	
+	Neither operand is modified in any way.
+	
+	This operator can be overloaded to accept user-defined types.
+
+{{fbdoc item="ex"}}
+{{fbdoc item="filename" value="examples/manual/operator/add.bas"}}%%(freebasic)
+DIM n AS SINGLE
+n = 4.75 + 5.25
+PRINT n
+%%
+	will produce the output:
+
+%%
+10
+%%
+
+{{fbdoc item="lang"}}
+	- In the //[[CompilerOptlang|-lang qb]]// dialect, this operator cannot be overloaded.
+
+{{fbdoc item="diff"}}
+	- None
+
+{{fbdoc item="see"}}
+	- [[KeyPgOpConcat|Operator + (String concatenation)]]
+	- [[CatPgMath|Mathematical Functions]]
+
+{{fbdoc item="back" value="CatPgOpArithmetic|Arithmetic Operators"}}{{fbdoc item="back" value="CatPgOperators|Operators"}}

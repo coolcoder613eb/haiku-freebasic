@@ -1,0 +1,22 @@
+{{fbdoc item="title" value="WEND"}}----
+Control flow statement.
+
+{{fbdoc item="syntax"}}##
+	**While** [//condition//]
+		[//statement block//]
+	**Wend**
+##
+{{fbdoc item="desc"}}
+	##**Wend**## specifies the end of a ##[[KeyPgWhilewend|While...Wend]]## loop block.
+
+{{fbdoc item="ex"}}
+	See example at ##[[KeyPgWhilewend|While...Wend]]##.
+
+{{fbdoc item="diff"}}
+	- None
+
+{{fbdoc item="see"}}
+	- ##[[KeyPgWhilewend|While...Wend]]##
+
+{{fbdoc item="back" value="CatPgMisc|Miscellaneous"}}
+   

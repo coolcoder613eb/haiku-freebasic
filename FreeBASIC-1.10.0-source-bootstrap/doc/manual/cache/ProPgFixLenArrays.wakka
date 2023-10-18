@@ -1,0 +1,63 @@
+{{fbdoc item="title" value="Fixed-length Arrays"}}----
+Fixed-size homogeneous data structures.
+
+{{fbdoc item="section" value="Overview"}}
+	Fixed-length arrays are [[ProPgArrays|arrays]] that have a fixed constant size throughout the execution of a program. The memory used by a fixed-length array to store its elements is allocated at compile-time, either on the stack or in the ##.BSS## or ##.DATA## sections of the executable, depending on whether ##[[KeyPgStatic|Static]]## (or ##[[KeyPgShared|Shared]]##) was used to define it. This may allow for quicker program execution since the memory for the array is already allocated, unlike [[ProPgVarLenArrays|variable-length arrays]], whose element memory isn't allocated until runtime.
+	
+	Fixed-length arrays with //[[ProPgStorageClasses|automatic storage]]//, have their elements allocated on the program stack, and pointers to these elements remain valid only while the array is in scope. The elements of fixed-length arrays with //[[ProPgStorageClasses|static storage]]// are allocated in the ##.DATA## or ##.BSS## sections of the executable, depending on whether or not they are initialized when defined, so pointers to these elements remain valid for the entire execution of the program. Fixed-length arrays of any storage class cannot be resized during program execution, only [[ProPgVarLenArrays|variable-length arrays]] can.
+	
+	Fixed-length arrays may also be used as data members inside [[ProPgUDTs|user-defined types]], in which case the array is directly allocated as part of the user-defined type structure.
+
+{{fbdoc item="section" value="Declaration"}}
+	A fixed-length array is declared with either the ##[[KeyPgDim|Dim]]## or ##[[KeyPgStatic|Static]]## keywords, followed by a variable identifier, a parenthesized list of boundaries and an element [[CatPgStdDataTypes|data type]].
+	
+		{{fbdoc item="filename" value="examples/manual/proguide/arrays/fixedlen_storage.bas"}}%%(freebasic)
+'' Defines a one-dimensional fixed-length array of type INTEGER having automatic storage.
+dim arrayOfIntegers(69) as integer
+
+'' Defines a one-dimensional fixed-length array of type SHORT having static storage.
+static arrayOfShorts(420) as short
+		%%
+	There are various ways to specify an array's amount of elements. Each array can have between 1 or 8 dimensions. Each dimension has a lower bound and an upper bound.
+	
+		{{fbdoc item="filename" value="examples/manual/proguide/arrays/fixedlen_bounds.bas"}}%%(freebasic)
+Dim a(1) As Integer  '' 1-dimensional, 2 elements (0 and 1)
+Dim b(0 To 1) As Integer  '' 1-dimensional, 2 elements (0 and 1)
+Dim c(5 To 10) As Integer  '' 1-dimensional, 6 elements (5, 6, 7, 8, 9 and 10)
+
+Dim d(1 To 2, 1 To 2) As Integer  '' 2-dimensional, 4 elements: (1,1), (1,2), (2,1), (2,2)
+Dim e(9, 9, 9, 9) As Integer '' 4-dimensional, 10 * 10 * 10 * 10 elements
+		%%
+	For an array to be declared fixed-length, the boundaries must be specified using only number literals or ##[[KeyPgConst|Const]]## values or ##[[KeyPgEnum|Enum]]## constants.
+	
+		{{fbdoc item="filename" value="examples/manual/proguide/arrays/fixedlen_constants.bas"}}%%(freebasic)
+const myLowerBound = -5
+const myUpperBound = 10
+
+'' Declares a one-dimensional fixed-length array, holding myUpperBound - myLowerBound + 1 String objects.
+dim arrayOfStrings(myLowerBound to myUpperBound) as string
+
+'' Declares a one-dimensional fixed-length array of bytes,
+'' big enough to hold an INTEGER.
+dim arrayOfBytes(0 to sizeof(integer) - 1) as byte
+		%%
+{{fbdoc item="section" value="Declaration with initializer"}}
+	The fixed-length arrays may be given values at the time of their declaration by following the array declaration with an initializer (variable-length arrays declarations can't use initializers).
+	These initializing array values are given in comma-delimited values enclosed by curly brackets. These methods of initializing array values can be nested within one another for complex assignments, allowing for arrays of any dimension to be initialized.
+	
+		{{fbdoc item="filename" value="examples/manual/proguide/arrays/fixedlen_initializer.bas"}}%%(freebasic)
+'' Declare an array of 2 by 5 elements followed by an initializer
+Dim array(1 To 2, 1 To 5) As Integer => {{1, 2, 3, 4, 5}, {1, 2, 3, 4, 5}}
+		%%
+	Any upper bound can be an ellipsis ##"..."## (3 dots). This will cause to upper bound to be set automatically based on the number of elements found in the initializer. When ellipsis is used in this manner, an initializer must be used.
+	
+		{{fbdoc item="filename" value="examples/manual/proguide/arrays/fixedlen_ellipsis_initializer.bas"}}%%(freebasic)
+'' Declare (with one ellipsis) an array of 2 by 5 elements followed by an initializer
+Dim array(1 To 2, 1 To ...) As Integer => {{1, 2, 3, 4, 5}, {1, 2, 3, 4, 5}}
+		%%
+		{{fbdoc item="filename" value="examples/manual/proguide/arrays/fixedlen_ellipsis2_initializer.bas"}}%%(freebasic)
+'' Declare (with two ellipsis) an array of 2 by 5 elements followed by an initializer
+Dim array(1 To ..., 1 To ...) As Integer => {{1, 2, 3, 4, 5}, {1, 2, 3, 4, 5}}
+		%%
+
+{{fbdoc item="back" value="CatPgProgrammer|Programmer's Guide"}}

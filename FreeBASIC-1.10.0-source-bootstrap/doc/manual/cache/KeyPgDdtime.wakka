@@ -1,0 +1,25 @@
+{{fbdoc item="title" value="__TIME__"}}----
+Intrinsic define (macro value) set by the compiler
+
+{{fbdoc item="syntax"}}##
+	""__TIME__""
+##
+{{fbdoc item="desc"}}
+	Substitutes the compiler time in a literal string (24 clock, ##"hh:mm:ss"## format) where used.
+
+{{fbdoc item="ex"}}
+{{fbdoc item="filename" value="examples/manual/defines/time.bas"}}%%(freebasic)
+PRINT "Compile Time: " & __TIME__
+%%
+%%
+Compile Time: 13:42:57
+%%
+{{fbdoc item="diff"}}
+	- New to ""FreeBASIC""
+
+{{fbdoc item="see"}}
+	- ##[[KeyPgDddate|__DATE__]]##
+	- ##[[KeyPgDddateiso|__DATE_ISO__]]##
+	- ##[[KeyPgTime|Time]]##
+
+{{fbdoc item="back" value="CatPgDddefines|Intrinsic Defines"}}

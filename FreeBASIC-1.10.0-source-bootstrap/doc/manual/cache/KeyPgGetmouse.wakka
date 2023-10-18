@@ -1,0 +1,120 @@
+{{fbdoc item="title" value="GETMOUSE"}}----
+Retrieves the status of the mouse pointing device
+
+{{fbdoc item="syntax"}}##
+	[[KeyPgDeclare|declare]] [[KeyPgFunction|function]] **Getmouse** ( [[KeyPgByref|byref]] //x// [[KeyPgAs|as]] [[KeyPgLong|long]], [[KeyPgByref|byref]] //y// [[KeyPgAs|as]] [[KeyPgLong|long]], [[KeyPgByref|byref]] //wheel// [[KeyPgAs|as]] [[KeyPgLong|long]] = 0, [[KeyPgByref|byref]] //buttons// [[KeyPgAs|as]] [[KeyPgLong|long]] = 0, [[KeyPgByref|byref]] //clip// [[KeyPgAs|as]] [[KeyPgLong|long]] = 0 ) [[KeyPgAs|as]] [[KeyPgLong|long]]
+	[[KeyPgDeclare|declare]] [[KeyPgFunction|function]] **Getmouse** ( [[KeyPgByref|byref]] //x// [[KeyPgAs|as]] [[KeyPgLongint|longint]], [[KeyPgByref|byref]] //y// [[KeyPgAs|as]] [[KeyPgLongint|longint]], [[KeyPgByref|byref]] //wheel// [[KeyPgAs|as]] [[KeyPgLongint|longint]] = 0, [[KeyPgByref|byref]] //buttons// [[KeyPgAs|as]] [[KeyPgLongint|longint]] = 0, [[KeyPgByref|byref]] //clip// [[KeyPgAs|as]] [[KeyPgLongint|longint]] = 0 ) [[KeyPgAs|as]] [[KeyPgLong|long]]
+##
+{{fbdoc item="usage"}}##
+	//result// = **Getmouse** (//x//, //y// [, [ //wheel// ] [, [ //buttons// ] [, [ //clip// ]]]])
+##
+{{fbdoc item="param"}}
+	##//x//##
+		x coordinate value
+	##//y//##
+		y coordinate value
+	##//wheel//##
+		scroll wheel value
+	##//buttons//##
+		button status
+	##//clip//##
+		clip status
+
+{{fbdoc item="ret"}}
+	##0## on success, or ##1## on error (for example because the mouse is outside the graphic window) or on failure. //[[ProPgErrorHandling|(sets a runtime error)]]//
+
+{{fbdoc item="desc"}}
+	##**Getmouse**## retrieves the mouse position and buttons status; information is returned in the variables passed to this function by reference. If a mouse is not available, all variables will contain the ##-1## value. 
+	
+	If in console mode, the ##//x//## and ##//y//## coordinates are the character cell coordinates the mouse is currently on; the upper left corner of the screen is at coordinates ##0, 0##. If the mouse moves out of the console window, ##**Getmouse**## returns the last coordinate on the window that the mouse was on. If in console mode and fullscreen, the scroll wheel value is not returned. 
+	
+	If in graphics mode, ##//x//## and ##//y//## will always be returned in pixel coordinates still relative to the upper left corner of the screen, which is at 0,0 in this case; custom coordinates system set via ##[[KeyPgViewgraphics|View]]## or ##[[KeyPgWindow|Window]]## do not affect the coordinates returned by ##**Getmouse**##.
+	If the mouse runs off the graphic window, all values are set to ##-1## and the return value of the function is set to ##1##. This may result in misinterpretation for the buttons and wheel if the return value of the function is not also tested.
+	
+	##//Wheel//## is the mouse wheel counter; rotating the wheel away from you makes the count to increase, rotating the wheel toward you makes it to decrease. At program startup or when a new graphics mode is set via ##[[KeyPgScreengraphics|Screen]]##, wheel position is reset to 0. ""FreeBASIC"" may not always support mouse wheels for a given platform, in which case 0 is always returned.
+	
+	##//Buttons//## stores the buttons status as a bitmask: bit 0 is set if left mouse button is down; bit 1 is set if right mouse button is down; bit 2 is set if middle mouse button / wheel is down.
+	
+	##//Clip//## stores the mouse clipping status; if ##1##, the mouse is currently clipped to the graphics window; if ##0##, the mouse is not clipped.
+	
+	The error code returned by ##**Getmouse**## can be checked using ##[[KeyPgErr|Err]]## in the next line. The function version of  ##**Getmouse**## returns directly the error code as a 32 bit ##[[KeyPgLong|Long]]##.
+	
+	**Warning:** When the flag GFX_SHAPED_WINDOW is set (see ##[[KeyPgScreenres|Screenres]]##), ##**Getmouse**## is only active in any colored area, ie there where color <> RGBA(255, 0, 255, alpha).
+
+{{fbdoc item="ex"}}
+	{{fbdoc item="filename" value="examples/manual/input/getmouse.bas"}}%%(freebasic)
+
+DIM AS LONG x, y, buttons, res 
+' Set video mode and enter loop
+SCREENRES 640, 480, 8
+DO
+	' Get mouse x, y and buttons. Discard wheel position.
+	res = GETMOUSE (x, y, , buttons)
+	LOCATE 1, 1
+	IF res <> 0 THEN '' Failure
+
+#IFDEF __FB_DOS__
+		PRINT "Mouse or mouse driver not available"
+#ELSE
+		PRINT "Mouse not available or not on window"
+#ENDIF
+
+	ELSE
+		PRINT USING "Mouse position: ###:###  Buttons: "; x; y;
+		IF buttons AND 1 THEN PRINT "L";
+		IF buttons AND 2 THEN PRINT "R";
+		IF buttons AND 4 THEN PRINT "M";
+		PRINT "   "
+	END IF
+LOOP WHILE INKEY = ""
+END
+%%
+	{{fbdoc item="filename" value="examples/manual/input/getmouse2.bas"}}%%(freebasic)
+'Example 2: type-union-type structure
+type mouse
+	as long res
+	as long x, y, wheel, clip
+	union
+		buttons as long
+		type
+			left:1 as long
+			right:1 as long
+			middle:1 as long
+		end type
+	end union
+end type
+ 
+screen 11
+dim as mouse m
+
+do
+	m.res = getmouse( m.x, m.y, m.wheel, m.buttons, m.clip )
+	screenlock
+	cls
+	print using "res = #"; m.res
+	print using "x = ###; y = ###; wheel = +###; clip = ##"; m.x; m.y; m.wheel; m.clip
+	print using "buttons = ##; left = #; middle = #; right = #"; m.buttons; m.left; m.middle; m.right
+	screenunlock
+	sleep 10, 1
+loop while inkey = ""
+%%
+{{fbdoc item="lang"}}
+	- Not available in the //[[CompilerOptlang|-lang qb]]// dialect unless referenced with the alias ##**""__Getmouse""**##.  The variables passed must also be of type ##[[KeyPgLong|Long]]## instead of ##[[KeyPgInteger|Integer]]##.
+
+{{fbdoc item="target"}}
+	- On ""Win32"", scroll wheel changes are not guaranteed to be detected in full-screen console mode.  Confirmed on ""WinXP"": In windowed mode, mouse wheel changes are seen, but in full-screen console mode they are not.
+	- In DOS, the "clip" value has no relevance.  Additionally the wheel and middle button will not work unless supported and enabled by the mouse driver. See also [[FaqDOS]].
+
+{{fbdoc item="diff"}}
+	- New to ""FreeBASIC""
+
+{{fbdoc item="see"}}
+	- ##[[KeyPgScreenres|Screenres]]## setting graph mode by resolution
+	- ##[[KeyPgScreengraphics|Screen (Graphics)]]## setting mode the QB-like way
+	- ##[[KeyPgSetmouse|Setmouse]]##
+	- ##[[KeyPgMultikey|Multikey]]##
+	- ##[[KeyPgGetjoystick|Getjoystick]]##
+	- ##[[KeyPgEvent|Event]]##
+	- ##[[KeyPgScreenevent|ScreenEvent]]##
+
+{{fbdoc item="back" value="CatPgGfxInput|User Input Functions"}}

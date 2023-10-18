@@ -1,0 +1,29 @@
+LIBRARY BASSMOD.dll
+EXPORTS
+BASSMOD_ErrorGetCode DATA
+BASSMOD_Free
+BASSMOD_GetCPU
+BASSMOD_GetDeviceDescription DATA
+BASSMOD_GetVersion DATA
+BASSMOD_GetVolume
+BASSMOD_Init
+BASSMOD_MusicDecode DATA
+BASSMOD_MusicFree DATA
+BASSMOD_MusicGetLength DATA
+BASSMOD_MusicGetName DATA
+BASSMOD_MusicGetPosition DATA
+BASSMOD_MusicGetVolume DATA
+BASSMOD_MusicIsActive
+BASSMOD_MusicLoad DATA
+BASSMOD_MusicPause
+BASSMOD_MusicPlay DATA
+BASSMOD_MusicPlayEx DATA
+BASSMOD_MusicRemoveSync DATA
+BASSMOD_MusicSetAmplify DATA
+BASSMOD_MusicSetPanSep DATA
+BASSMOD_MusicSetPosition DATA
+BASSMOD_MusicSetPositionScaler DATA
+BASSMOD_MusicSetSync DATA
+BASSMOD_MusicSetVolume DATA
+BASSMOD_MusicStop
+BASSMOD_SetVolume

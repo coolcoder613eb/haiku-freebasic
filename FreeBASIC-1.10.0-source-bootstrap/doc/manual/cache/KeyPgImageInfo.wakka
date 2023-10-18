@@ -1,0 +1,162 @@
+{{fbdoc item="title" value="IMAGEINFO"}}----
+Retrieves information about an image
+
+{{fbdoc item="syntax"}}##
+	[[KeyPgDeclare|declare]] [[KeyPgFunction|function]] **Imageinfo** ( [[KeyPgByval|byval]] //image// [[KeyPgAs|as]] [[KeyPgConstQualifier|const]] [[KeyPgAny|any]] [[KeyPgPtr|ptr]], [[KeyPgByref|byref]] //width// [[KeyPgAs|as]] [[KeyPgLong|long]] = 0, [[KeyPgByref|byref]] //height// [[KeyPgAs|as]] [[KeyPgLong|long]] = 0, [[KeyPgByref|byref]] //bypp// [[KeyPgAs|as]] [[KeyPgLong|long]] = 0, [[KeyPgByref|byref]] //pitch// [[KeyPgAs|as]] [[KeyPgLong|long]] = 0, [[KeyPgByref|byref]] //pixdata// [[KeyPgAs|as]] [[KeyPgAny|any]] [[KeyPgPtr|ptr]] = 0, [[KeyPgByref|byref]] //size// [[KeyPgAs|as]] [[KeyPgLongint|longint]] = 0 ) [[KeyPgAs|as]] [[KeyPgLong|long]]
+	[[KeyPgDeclare|declare]] [[KeyPgFunction|function]] **Imageinfo** ( [[KeyPgByval|byval]] //image// [[KeyPgAs|as]] [[KeyPgConstQualifier|const]] [[KeyPgAny|any]] [[KeyPgPtr|ptr]], [[KeyPgByref|byref]] //width// [[KeyPgAs|as]] [[KeyPgLongint|longint]], [[KeyPgByref|byref]] //height// [[KeyPgAs|as]] [[KeyPgLongint|longint]], [[KeyPgByref|byref]] //bypp// [[KeyPgAs|as]] [[KeyPgLongint|longint]] = 0, [[KeyPgByref|byref]] //pitch// [[KeyPgAs|as]] [[KeyPgLongint|longint]] = 0, [[KeyPgByref|byref]] //pixdata// [[KeyPgAs|as]] [[KeyPgAny|any]] [[KeyPgPtr|ptr]] = 0, [[KeyPgByref|byref]] //size// [[KeyPgAs|as]] [[KeyPgLongint|longint]] = 0 ) [[KeyPgAs|as]] [[KeyPgLong|long]]
+##
+{{fbdoc item="usage"}}##
+	in the LONG (or INTEGER<32>) version of the function:
+		//result// = **Imageinfo**( //image// [, [ //width// ] [, [ //height// ] [, [ //bypp// ] [, [ //pitch// ] [ , [ //pixdata// ] [, //size// ]]]]]] )
+	in the LONGINT (or INTEGER<64>) version of the function:
+		//result// = **Imageinfo**( //image// , //width// , //height// [, [ //bypp// ] [, [ //pitch// ] [ , [ //pixdata// ] [, //size// ]]]] )
+##
+{{fbdoc item="param"}}
+	##//image//##
+		The address of the image.
+	##//width//##
+		Stores the width of the image, in pixels.
+	##//height//##
+		Stores the height of the image, in pixels.
+	##//bypp//##
+		Stores the bytes per pixel of the image - i.e. the size of a single pixel, in bytes.
+	##//pitch//##
+		Stores the pitch of the image - i.e. the size of each scanline (row), in bytes.  Note that this may be more than just ##//width// * //bypp//##, because the scanlines may be padded to allow them to be aligned better in memory.
+	##//pixdata//##
+		Stores the address of the start of the first scanline of the image.
+	##//size//##
+		Stores the size of the image in memory, in bytes.
+
+{{fbdoc item="ret"}}
+	If ##//image//## doesn't point to a valid image, one (##1##) is returned. Otherwise, ##//width//##, ##//height//##, ##//bypp//##, ##//pitch//##, ##//pixdata//## and ##//size//## are assigned appropriate values, and zero (##0##) is returned.
+
+{{fbdoc item="desc"}}
+	##**""ImageInfo""**## provides various information about an image, such as its dimensions and color depth, but also provides you with the information you need to directly access all the pixel data in the pixel buffer.
+	
+	It can also provide the size of the image in memory, which is useful for allocating memory to copy the existing image, or to write the image to a file.
+	
+	##**""ImageInfo""**## is an alternative way to access the main characteristics of an image, rather than directly accessing the internal FB.IMAGE structure (defined in ##fbgfx.bi##) through a typed pointer to member data.
+	
+	The error code returned by ##**""ImageInfo""**## can be checked using ##[[KeyPgErr|Err]]## in the next line. The function version of  ##**""ImageInfo""**## returns directly the error code as a 32 bit ##[[KeyPgLong|Long]]##.
+
+{{fbdoc item="ex"}}
+	{{fbdoc item="filename" value="examples/manual/gfx/pixelptr.bas"}}%%(freebasic)
+'' pixelptr(): use imageinfo() to find the pointer to a pixel in the image
+'' returns null on error or x,y out of bounds
+function pixelptr(byval img as any ptr, byval x as integer, byval y as integer) as any ptr
+
+	dim as long w, h, bypp, pitch
+	dim as any ptr pixdata
+	dim as long success
+	
+	success = (imageinfo(img, w, h, bypp, pitch, pixdata) = 0)
+	
+	if success then
+		if x < 0 or x >= w then return 0
+		if y < 0 or y >= h then return 0
+		return pixdata + y * pitch + x * bypp
+	else
+		return 0
+	end if
+	
+end function
+
+'' usage example:
+
+'' 320*200 graphics screen, 8 bits per pixel
+screenres 320, 200, 8
+
+dim as any ptr ip '' image pointer
+
+dim as byte ptr pp '' pixel pointer (use byte for 8 bits per pixel)
+
+ip = imagecreate(32, 32) '' create an image (32*32, 8 bits per pixel)
+
+if ip <> 0 then
+
+	'' draw a pattern on the image
+	for y as integer = 0 to 31
+
+		for x as integer = y - 5 to y + 5 step 5
+
+			'' find the pointer to pixel at x,y position
+			'' note: this is inefficient to do for every pixel!
+			pp = pixelptr(ip, x, y)
+
+			'' if success, plot a value at the pixel
+			if (pp <> 0) then *pp = 15
+
+		next x
+
+	next y
+
+	'' put the image and draw a border around it
+	put (10, 10), ip, pset
+	line (9, 9)-step(33, 33), 4, b
+
+	'' destroy the image to reclaim memory
+	imagedestroy ip
+
+else
+	print "Error creating image!"
+end if
+
+sleep
+	%%
+{{image class="center" title="Output image for pixelptr() example" url="/images/pixelptr.png"}}
+
+	{{fbdoc item="filename" value="examples/manual/gfx/imageinfo.bas"}}%%(freebasic)
+'' Create 32-bit graphics screen and image.
+screenres 320, 200, 32
+dim image as any ptr = imagecreate( 64, 64 )
+
+dim pitch as long
+dim pixels as any ptr
+
+'' Get enough information to iterate through the pixel data.
+if 0 <> imageinfo( image, ,,, pitch, pixels ) then
+	print "unable to retrieve image information."
+	sleep
+	end
+end if
+
+'' Draw a pattern on the image by directly manipulating pixel memory.
+for y as integer = 0 to 63
+	dim row as ulong ptr = pixels + y * pitch
+	
+	for x as integer = 0 to 63
+		row[x] = rgb(x * 4, y * 4, (x xor y) * 4)
+	next x
+next y
+
+'' Draw the image onto the screen.
+put (10, 10), image
+
+imagedestroy( image )
+
+sleep
+	%%
+{{image class="center" title="Output image for ImageInfo example" url="/images/imageinfo.png"}}
+
+{{fbdoc item="ver"}}
+	- Before fbc 1.08.0:
+			Syntax:
+				##[[KeyPgDeclare|declare]] [[KeyPgFunction|function]] **Imageinfo** ( [[KeyPgByval|byval]] //image// [[KeyPgAs|as]] [[KeyPgAny|any]] [[KeyPgPtr|ptr]], [[KeyPgByref|byref]] //width// [[KeyPgAs|as]] [[KeyPgInteger|integer]] = 0, [[KeyPgByref|byref]] //height// [[KeyPgAs|as]] [[KeyPgInteger|integer]] = 0, [[KeyPgByref|byref]] //bypp// [[KeyPgAs|as]] [[KeyPgInteger|integer]] = 0, [[KeyPgByref|byref]] //pitch// [[KeyPgAs|as]] [[KeyPgInteger|integer]] = 0, [[KeyPgByref|byref]] //pixdata// [[KeyPgAs|as]] [[KeyPgAny|any]] [[KeyPgPtr|ptr]] = 0, [[KeyPgByref|byref]] //size// [[KeyPgAs|as]] [[KeyPgInteger|integer]] = 0 ) [[KeyPgAs|as]] [[KeyPgLong|long]]##
+			Usage:
+				##//result// = **Imageinfo**( //image// [, [ //width// ] [, [ //height// ] [, [ //bypp// ] [, [ //pitch// ] [, [ //pixdata// ] [, //size// ]]]]]] )##
+
+{{fbdoc item="lang"}}
+	- Not available in the //[[CompilerOptlang|-lang qb]]// dialect unless referenced with the alias ##**""__Imageinfo""**##.
+
+{{fbdoc item="diff"}}
+	- New to ""FreeBASIC""
+
+{{fbdoc item="see"}}
+	- ##[[KeyPgImagecreate|ImageCreate]]##
+	- ##[[KeyPgImageDestroy|ImageDestroy]]##
+	- ##[[KeyPgImageConvertRow|ImageConvertRow]]##
+	- ##[[KeyPgGetgraphics|Get (Graphics)]]##
+	- ##[[KeyPgPutgraphics|Put (Graphics)]]##
+	- [[GfxInternalFormats|Internal pixel formats]]
+
+{{fbdoc item="back" value="CatPgGfx2D|2D Drawing Functions"}}

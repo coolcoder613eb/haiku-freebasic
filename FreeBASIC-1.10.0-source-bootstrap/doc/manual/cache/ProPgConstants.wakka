@@ -1,0 +1,44 @@
+{{fbdoc item="title" value="Constants"}}----
+Constants are identifiers that represent literals or constant expressions that can not be changed after they are defined.
+
+For example, ##Const PI = 3.1415926535897932## will always mean that the identifier ##PI## refers to the number ##3.1415926535897932##.  The identifier ##PI## can be used instead of repeating the full number in source.
+	
+Global constants once defined, are available globally and the identifier can be used to refer to the constant anywhere in the source program. 
+	
+After an identifier is defined with the ##[[KeyPgConst|Const]]## statement, the symbol cannot be altered. If code tries to alter a constant, an error message will result upon code compilation.
+
+Built-in constants include the ##[[KeyPgBoolean|boolean]]## data type values ##[[KeyPgTrue|true]]## and ##[[KeyPgFalse|false]]##.
+
+A constant definition differs from a variable definition.  Variables hold values that can be changed.
+
+{{fbdoc item="ex"}}
+{{fbdoc item="filename" value="examples/manual/proguide/constants/constants.bas"}}%%(freebasic)
+Declare Sub PrintConstants ()
+
+Const FirstNumber = 1
+Const SecondNumber = 2
+Const FirstString = "First string."
+Const FirstBoolean = False
+Const SecondBoolean = True
+
+Print FirstNumber, SecondNumber 'This will print 1      2
+Print FirstString 'This will print First string.
+Print FirstBoolean, SecondBoolean 'This will print false      true
+Print
+
+PrintConstants ()
+
+Sub PrintConstants ()
+	Print FirstNumber, SecondNumber 'This will also print 1        2
+	Print FirstString 'This will also print First string.
+	Print FirstBoolean, SecondBoolean 'This will also print false      true
+End Sub
+%%
+
+{{fbdoc item="see"}}
+	- ##[[ProPgConstantExpressions|Constant Expressions]]##
+	- ##[[ProPgLiterals|Literals]]##
+	- ##[[KeyPgConst|Const]]##
+	- ##[[KeyPgEnum|Enum]]##
+
+{{fbdoc item="back" value="CatPgProgrammer|Programmer's Guide"}}

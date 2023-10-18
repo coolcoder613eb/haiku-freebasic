@@ -1,0 +1,28 @@
+{{fbdoc item="title" value="EXPORT"}}----
+Definition specifier to indicate that a procedure in a DLL should be visible from other programs
+
+{{fbdoc item="syntax"}}##
+	{ [[KeyPgSub|sub]] | [[KeyPgFunction|function]] } //proc_name// ( //argumentlist// ) [ [ [[KeyPgByrefFunction|byref]] ] [[KeyPgAs|as]] [[DataType|datatype]] ] **Export**
+##
+{{fbdoc item="desc"}}
+	If a function is defined with this clause in a DLL, it is added to the public export table, so external programs can dynamically link to it using [[KeyPgDylibsymbol|Dylibsymbol]].
+	(specifier to be put at the level of the first line of procedure definition, forbidden at procedure declaration line level)
+
+{{fbdoc item="ex"}}
+	See the examples on the [[ProPgSharedLibraries|Shared Libraries]] page.
+
+{{fbdoc item="lang"}}
+	- Not available in the //[[CompilerOptlang|-lang qb]]// dialect unless referenced with the alias ##**""__Export""**##.
+
+{{fbdoc item="target"}}
+	- ##**""Export""**## has no effect in DOS dynamic link libraries (DXE's); all public procedures are exported.
+
+{{fbdoc item="diff"}}
+	- New to Freebasic
+
+{{fbdoc item="see"}}
+	- ##[[KeyPgDylibload|Dylibload]]##
+	- ##[[KeyPgDylibsymbol|Dylibsymbol]]##
+	- ##[[KeyPgAlias|Alias]]##
+
+{{fbdoc item="back" value="CatPgModularizing|Modularizing"}}{{fbdoc item="back" value="CatPgProcedures|Procedures"}}

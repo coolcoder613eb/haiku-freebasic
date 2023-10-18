@@ -1,0 +1,23 @@
+{{fbdoc item="title" value="Compiler Option: -t"}}----
+Set stack size in kilobytes
+
+{{fbdoc item="syntax"}}##
+	**-t** < //stack size// >
+##
+{{fbdoc item="param"}}
+	##//stack size//##
+		Stack size in kilobytes.
+
+{{fbdoc item="desc"}}
+	The ##-t## compiler option sets the stack size in kilobytes (defaults to 1024 KBytes for 32-bit targets, and 2048 KBytes for 64-bit targets). The local arrays are created in the stack, so 1 MB or 2 MB of stack is not always enough.
+
+{{fbdoc item="ver"}}
+	- Before fbc 1.08.0, the default stack size for 64-bit targets was also 1024 KBytes.
+
+{{fbdoc item="target"}}
+	- Supported on Windows, Cygwin and DOS only.
+
+{{fbdoc item="see"}}
+	- [[CompilerCmdLine|Using the Command Line]]
+
+{{fbdoc item="back" value="CatPgCompOpt|Compiler Options"}}

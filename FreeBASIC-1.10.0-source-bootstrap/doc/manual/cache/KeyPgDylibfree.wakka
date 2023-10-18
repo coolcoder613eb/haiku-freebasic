@@ -1,0 +1,34 @@
+{{fbdoc item="title" value="DYLIBFREE"}}----
+Unloads a dynamic link library from memory
+
+{{fbdoc item="syntax"}}##
+	[[KeyPgDeclare|declare]] [[KeyPgSub|sub]] **Dylibfree** ( [[KeyPgByval|byval]] //libhandle// [[KeyPgAs|as]] [[KeyPgAny|any]] [[KeyPgPtr|pointer]] )
+##
+{{fbdoc item="usage"}}##
+	**Dylibfree**( //libhandle// )
+##
+{{fbdoc item="param"}}
+	##//libhandle//##
+		The handle of a library to unload.
+
+{{fbdoc item="desc"}}
+	##**Dylibfree**## is used to release at runtime libraries previously linked to your program with ##[[KeyPgDylibload|Dylibload]]##. The argument is the handle to the library returned by ##[[KeyPgDylibload|Dylibload]]##.
+
+{{fbdoc item="ex"}}
+	See the dynamic loading example on the [[ProPgSharedLibraries|Shared Libraries]] page.
+
+{{fbdoc item="target"}}
+	- DOS: see specific [[ProPgSharedLibrariesDOS|Shared Libraries - DOS]] page
+
+{{fbdoc item="lang"}}
+	- Not available in the //[[CompilerOptlang|-lang qb]]// dialect unless referenced with the alias ##**""__Dylibfree""**##.
+
+{{fbdoc item="diff"}}
+	- New to ""FreeBASIC""
+
+{{fbdoc item="see"}}
+	- ##[[KeyPgDylibsymbol|Dylibsymbol]]##
+	- ##[[KeyPgDylibload|Dylibload]]##
+	- ##[[KeyPgExport|Export]]##
+
+{{fbdoc item="back" value="CatPgModularizing|Modularizing"}}

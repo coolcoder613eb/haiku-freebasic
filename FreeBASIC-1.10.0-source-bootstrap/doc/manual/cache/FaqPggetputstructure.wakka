@@ -1,0 +1,68 @@
+{{fbdoc item="title" value="GET/PUT image header example"}}----
+Example showing the two different headers used for image buffers.
+Note: ##[[KeyPgImageInfo|ImageInfo]]## is provided as a simpler alternative to reading the image structures directly.
+
+{{fbdoc item="filename" value="examples/manual/faq/gfxlib2/image-header.bas"}}%%(freebasic)
+'' fbgfx.bi contains the necessary structures and constants for working
+'' directly with image headers
+#include "fbgfx.bi"
+
+'' in lang fb, structures and constants are contained in the FB namespace
+#if __FB_LANG__ = "fb"
+using FB
+#endif
+
+
+'' function to show info on an image
+sub show_image_info( byval img as any ptr )
+	dim as PUT_HEADER ptr header ' IMAGE can also be use instead of PUT_HEADER
+	dim as integer w, h, bpp, pitch
+
+	header = img
+	if( header->type = PUT_HEADER_NEW ) then
+
+		print "New style header"
+
+		w = header->width
+		h = header->height
+		bpp = header->bpp
+		pitch = header->pitch
+
+	else
+
+		print "Old style header"
+
+		w = header->old.width
+		h = header->old.height
+		bpp = header->old.bpp
+		pitch = w * bpp
+
+	end if
+
+	print "Image dimensions are " & w & "*" & h
+	print "Image uses " & bpp & " bytes for each pixel"
+	print "A row of image pixels takes " & pitch & " bytes"
+
+end sub
+
+
+dim as any ptr picture
+
+screenres 320, 200, 32
+
+picture = imagecreate( 10, 10, RGB(128, 192, 255) )
+
+put( 40, 40 ), picture, pset
+
+show_image_info( picture )
+
+imagedestroy picture
+
+sleep%%
+
+NOTE: To use this code with an array, pass your array to the function, like this:
+
+%%(freebasic)
+show_image_info( varptr( myarray( L ) ) )
+%%
+where L is the lower bound of myarray().
